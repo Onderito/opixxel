@@ -1,0 +1,13 @@
+__turbopack_load_page_chunks__("/_app", [
+  "static/chunks/0qp~_next_dist_compiled_119gch2._.js",
+  "static/chunks/0qp~_next_dist_shared_lib_11e5xa4._.js",
+  "static/chunks/0qp~_next_dist_client_0of6usp._.js",
+  "static/chunks/0qp~_next_dist_00m3f_j._.js",
+  "static/chunks/0qp~_next_app_0op06-c.js",
+  "static/chunks/[next]_entry_page-loader_ts_0aurzzw._.js",
+  "static/chunks/0qp~_react-dom_11v2b0i._.js",
+  "static/chunks/0qp~_06hvy_4._.js",
+  "static/chunks/[root-of-the-server]__0he5dww._.js",
+  "static/chunks/opixxel__claude_worktrees_youthful-raman-16f253_pages__app_07xvfw~._.js",
+  "static/chunks/turbopack-opixxel__claude_worktrees_youthful-raman-16f253_pages__app_0ze-x78._.js"
+])

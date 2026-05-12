@@ -1,26 +1,107 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f5f4f0;
+  --foreground: #111110;
+  --bg-canvas: #f5f4f0;
+  --bg-dark: #222222;
+  --bg-surface: #edecea;
+  --stroke: #e3e1dc;
+  --text-title: #111110;
+  --text-body: #555552;
+  --text-label: #999994;
+  --accent: #ff4d2e;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-canvas: var(--bg-canvas);
+  --color-dark: var(--bg-dark);
+  --color-surface: var(--bg-surface);
+  --color-stroke: var(--stroke);
+  --color-title: var(--text-title);
+  --color-body: var(--text-body);
+  --color-label: var(--text-label);
+  --color-accent: var(--accent);
+  --font-bricolage: var(--font-bricolage-family);
+  --font-manrope: var(--font-manrope-family);
+  --font-sans: var(--font-manrope-family);
+  --font-caveat: var(--font-caveat-family);
+
+  /* DM Sans weights — génère font-thin … font-black + font-regular */
+  --font-weight-thin: 100;
+  --font-weight-extralight: 200;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer components {
+  .heading-1 {
+    @apply font-bold text-[32px] leading-10 tracking-[-2px]
+           lg:text-[64px] lg:leading-18  md:text-[48px] md:leading-12
+           xl:text-[80px] xl:leading-none xl:tracking-[-0.05em];
+  }
+
+  .heading-2 {
+    @apply font-medium text-[28px] tracking-[-2px]
+           md:text-[48px]
+           xl:text-[56px] xl:tracking-[-0.02em] leading-tight;
+  }
+
+  .heading-3 {
+    @apply text-[18px] tracking-[-0.5px]
+           md:text-[20px] xl:text-[26px] leading-snug;
+  }
+
+  .heading-4 {
+    @apply font-bold text-[16px] tracking-[-0.5px]
+           md:text-[18px] xl:text-[20px] leading-snug;
+  }
+
+  .body-text {
+    @apply text-[14px] text-white md:text-[16px] xl:text-[18px]
+           tracking-[-0.01em] leading-relaxed;
+  }
+  .card-text {
+    @apply text-[14px] md:text-[15px] xl:text-[16px] tracking-tight
+            leading-relaxed;
+  }
+  .container {
+    @apply container mx-auto px-4 py-10 sm:px-8 md:px-12 lg:px-12 xl:py-24 xl:px-12;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  html {
+    color-scheme: light;
+    background-color: var(--background);
+  }
+
+  body {
+    min-height: 100vh;
+    background: var(--background);
+    color: var(--text-body);
+    font-family: var(--font-manrope-family), system-ui, sans-serif;
+    font-weight: 300;
+  }
+
+  small,
+  label,
+  figcaption {
+    color: var(--text-label);
+  }
+
+  a {
+    color: inherit;
+  }
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 22%, white);
+  color: var(--text-title);
 }
