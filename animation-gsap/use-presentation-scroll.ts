@@ -4,67 +4,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const EASE_REVEAL = "power4.out";
-const EASE_CLIP = "power3.inOut";
-
-const SLIDE_DUR = 0.85;
-const CLIP_DUR = 0.9;
-const STEP = 0.15;
-const PHRASE_GAP = 0.22;
-
-function buildTimeline(tl: gsap.core.Timeline, groups: HTMLElement[]) {
-  let currentPhrase = groups[0]?.dataset.phrase ?? "0";
-  let cursor = 0;
-  let phraseEndTime = 0;
-
-  groups.forEach((group) => {
-    const phrase = group.dataset.phrase ?? "0";
-
-    if (phrase !== currentPhrase) {
-      cursor = phraseEndTime + PHRASE_GAP;
-      currentPhrase = phrase;
-    }
-
-    const slide = group.querySelector<HTMLElement>("[data-slide]");
-    if (!slide) return;
-
-    const fromLeft = group.dataset.dir === "left";
-    const extraDelay = parseFloat(group.dataset.delay ?? "0");
-    const ease = group.dataset.ease ?? EASE_REVEAL;
-
-    tl.to(
-      slide,
-      {
-        [fromLeft ? "xPercent" : "yPercent"]: 0,
-        duration: SLIDE_DUR,
-        ease,
-      },
-      cursor + extraDelay,
-    );
-    let groupEnd = cursor + SLIDE_DUR + extraDelay;
-
-    const clipTarget =
-      group.querySelector<HTMLElement>("[data-design-clip]") ??
-      group.querySelector<HTMLElement>("[data-img-clip]");
-
-    if (clipTarget) {
-      tl.to(
-        clipTarget,
-        {
-          clipPath: "inset(0% 0% 0% 0%)",
-          duration: CLIP_DUR,
-          ease: EASE_CLIP,
-        },
-        cursor + extraDelay,
-      );
-      groupEnd = Math.max(groupEnd, cursor + CLIP_DUR + extraDelay);
-    }
-
-    phraseEndTime = Math.max(phraseEndTime, groupEnd);
-    cursor += STEP;
-  });
-}
-
 export function usePresentationScroll() {
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -75,49 +14,94 @@ export function usePresentationScroll() {
     const ctx = gsap.context(() => {
       const groups = gsap.utils.toArray<HTMLElement>("[data-phrase]", section);
 
-      // États initiaux
-      groups.forEach((group) => {
-        const slide = group.querySelector<HTMLElement>("[data-slide]");
-        if (slide) {
-          group.dataset.dir === "left"
-            ? gsap.set(slide, { xPercent: -110 })
-            : gsap.set(slide, { yPercent: 110 });
-        }
-        const clipTarget =
-          group.querySelector<HTMLElement>("[data-design-clip]") ??
-          group.querySelector<HTMLElement>("[data-img-clip]");
-        if (clipTarget)
-          gsap.set(clipTarget, { clipPath: "inset(0% 50% 0% 50%)" });
-      });
+      // ── Groupes animés : images + badge design ────────────────────────────
+      const animatedGroups = groups.filter(
+        (g) =>
+          g.querySelector("[data-img-clip]") !== null ||
+          g.querySelector("[data-design-clip]") !== null,
+      );
+
+      // ── Mémorise largeurs naturelles AVANT réduction à 0 ─────────────────
+      const naturalWidths = new Map<HTMLElement, number>();
+      animatedGroups.forEach((g) => naturalWidths.set(g, g.offsetWidth));
+
+      // ── État initial : groupes animés à 0, textes visibles ───────────────
+      animatedGroups.forEach((g) =>
+        gsap.set(g, { width: 0, overflow: "hidden" }),
+      );
 
       const mm = gsap.matchMedia();
 
-      // ── Desktop : section pinnée, animation séquence par séquence au scroll
+      // ── Desktop : scrub ───────────────────────────────────────────────────
       mm.add("(min-width: 768px)", () => {
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
-            start: "top top",
-            end: "+=180%",
-            pin: true,
-            anticipatePin: 1,
-            scrub: 1.5,
+            start: "top 50%",
+            end: "80% 50%",
+            scrub: 1.2,
           },
         });
-        buildTimeline(tl, groups);
+
+        animatedGroups.forEach((g, i) => {
+          tl.to(
+            g,
+            {
+              width: naturalWidths.get(g),
+              duration: 1.5,
+              ease: "power2.out",
+            },
+            i * 0.5,
+          );
+
+          const inner = g.querySelector<HTMLElement>(
+            "[data-img-clip], [data-design-clip]",
+          );
+          if (inner) {
+            gsap.set(inner, { scale: 1.08, transformOrigin: "center center" });
+            tl.to(
+              inner,
+              { scale: 1, duration: 0.7, ease: "power2.out" },
+              i * 0.5,
+            );
+          }
+        });
       });
 
-      // ── Mobile : pas de pin, scroll classique
+      ////////////////////// FORMAT DES MOBILES ////////////////////////
       mm.add("(max-width: 767px)", () => {
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
-            start: "top 60%",
-            end: "bottom 10%",
-            scrub: 1,
+            start: "top 80%",
+            end: "60% 50%",
+            scrub: 1.2,
           },
         });
-        buildTimeline(tl, groups);
+
+        animatedGroups.forEach((g, i) => {
+          tl.to(
+            g,
+            {
+              width: naturalWidths.get(g),
+              duration: 1.5,
+              ease: "power2.out",
+            },
+            i * 0.5,
+          );
+
+          const inner = g.querySelector<HTMLElement>(
+            "[data-img-clip], [data-design-clip]",
+          );
+          if (inner) {
+            gsap.set(inner, { scale: 1.08, transformOrigin: "center center" });
+            tl.to(
+              inner,
+              { scale: 1, duration: 0.7, ease: "power2.out" },
+              i * 0.5,
+            );
+          }
+        });
       });
     }, sectionRef);
 

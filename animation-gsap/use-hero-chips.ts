@@ -42,6 +42,9 @@ export function useHeroChips() {
       return el;
     });
 
+    const zone = section.querySelector<HTMLElement>("[data-chips-zone]");
+    if (!zone) return;
+
     let poolIdx  = 0;
     let labelIdx = 0;
     let lastTime = 0;
@@ -49,10 +52,11 @@ export function useHeroChips() {
     let vx = 0, vy = 0;
 
     function onMove(e: MouseEvent) {
-      const now  = Date.now();
-      const rect = section!.getBoundingClientRect();
-      const x    = e.clientX - rect.left;
-      const y    = e.clientY - rect.top;
+      const now      = Date.now();
+      const sRect    = section!.getBoundingClientRect();
+      // Position relative à la section (pour le container absolu)
+      const x = e.clientX - sRect.left;
+      const y = e.clientY - sRect.top;
 
       // Vélocité instantanée
       const dt = Math.max(now - lastTime, 1);
@@ -112,9 +116,9 @@ export function useHeroChips() {
       });
     }
 
-    section.addEventListener("mousemove", onMove);
+    zone.addEventListener("mousemove", onMove);
     return () => {
-      section.removeEventListener("mousemove", onMove);
+      zone.removeEventListener("mousemove", onMove);
       container.remove();
     };
   }, []);

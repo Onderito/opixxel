@@ -7,7 +7,7 @@
   --bg-dark: #222222;
   --bg-surface: #edecea;
   --stroke: #e3e1dc;
-  --text-title: #111110;
+  --text-title: #281e1e;
   --text-body: #555552;
   --text-label: #999994;
   --accent: #ff4d2e;
@@ -64,7 +64,7 @@
   }
 
   .body-text {
-    @apply text-[14px] text-white md:text-[16px] xl:text-[18px]
+    @apply text-[14px] md:text-[16px] xl:text-[18px]
            tracking-[-0.01em] leading-relaxed;
   }
   .card-text {

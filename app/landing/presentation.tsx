@@ -4,62 +4,49 @@ import Image from "next/image";
 import { usePresentationScroll } from "@/animation-gsap/use-presentation-scroll";
 import { useTextReveal } from "@/animation-gsap/use-text-reveal";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// SÉQUENCE — modifie uniquement ce tableau
-//
-// phrase  → "1" | "2" | "3"     Les phrases s'animent l'une après l'autre
-// dir     → "up" | "left"       Direction d'entrée (défaut : "up" = par le bas)
-// delay   → secondes            Délai avant démarrage (ex: attendre que l'image s'ouvre)
-// ease    → string GSAP         Easing custom sur cet élément (défaut : power4.out)
-// kind    → "text"              Mot normal
-//           "image"             Photo avec révélation clip-path
-//           "design"            Badge orange italic avec clip-path
-// ─────────────────────────────────────────────────────────────────────────────
 const SEQUENCE = [
   // ── Phrase 1 — introduction ────────────────────────────────────
-  { phrase: "1", kind: "text", content: "MOI" },
-  { phrase: "1", kind: "text", content: "C'EST" },
-  { phrase: "1", kind: "text", content: "ULAS", ease: "back.out(1.4)" },
+  { phrase: "1", kind: "text", content: "Moi" },
+  { phrase: "1", kind: "text", content: "c'est" },
 
   {
     phrase: "1",
     kind: "image",
     src: "/images/profil.webp",
     alt: "Ulas",
-    rotate: "-rotate-2",
   },
 
-  { phrase: "1", kind: "text", content: "JE", dir: "left", delay: 0.5 },
-  { phrase: "1", kind: "text", content: "PENSE", dir: "left", delay: 0.5 },
-  { phrase: "1", kind: "text", content: "LE", dir: "left", delay: 0.2 },
+  { phrase: "1", kind: "text", content: "Ulas", ease: "back.out(1.4)" },
+  { phrase: "1", kind: "text", content: "je", dir: "left", delay: 0.5 },
+  { phrase: "1", kind: "text", content: "pense", dir: "left", delay: 0.5 },
+  { phrase: "1", kind: "text", content: "le", dir: "left", delay: 0.2 },
 
   // ── Phrase 2 — proposition de valeur ──────────────────────────
   { phrase: "2", kind: "design", content: "Design" },
-  { phrase: "2", kind: "text", content: "CODE", dir: "left" },
-  { phrase: "2", kind: "text", content: "LES", dir: "left" },
-  { phrase: "2", kind: "text", content: "ANIMATIONS", dir: "left" },
+  { phrase: "2", kind: "text", content: "code", dir: "left" },
+  { phrase: "2", kind: "deco" },
+  { phrase: "2", kind: "text", content: "les", dir: "left" },
+  { phrase: "2", kind: "text", content: "animations", dir: "left" },
 
   // ── Phrase 3 — conclusion ──────────────────────────────────────
-  { phrase: "3", kind: "text", content: "ET" },
-  { phrase: "3", kind: "text", content: "LIVRE" },
-  { phrase: "3", kind: "text", content: "LE" },
+  { phrase: "3", kind: "text", content: "et" },
+  { phrase: "3", kind: "text", content: "livre" },
+  { phrase: "3", kind: "text", content: "le" },
+  { phrase: "3", kind: "text", content: "produit", dir: "left", delay: 0.5 },
 
   {
     phrase: "3",
     kind: "image",
     src: "/images/nomado.webp",
     alt: "Produit",
-    rotate: "rotate-1",
   },
-
-  { phrase: "3", kind: "text", content: "PRODUIT", dir: "left", delay: 0.5 },
   {
     phrase: "3",
     kind: "text",
     content: "Final.",
     dir: "left",
     delay: 0.5,
-    className: "font-bricolage italic normal-case font-bold",
+    className: "font-bricolage italic font-black",
     ease: "back.out(2.5)",
   },
 ] as const;
@@ -85,24 +72,18 @@ function RevealWrapper({
   slideClassName?: string;
   children: React.ReactNode;
 }) {
-  const buffer =
-    kind === "design"
-      ? "py-[0.1em] px-[0.3em]"
-      : kind === "image"
-        ? "p-[0.15em]"
-        : "py-[0.01em] px-[0.12em]";
-
+  const isClipped = kind !== "text";
   return (
     <span
       data-phrase={phrase}
       data-dir={dir}
       data-delay={delay || undefined}
       data-ease={ease || undefined}
-      className="inline-flex overflow-hidden [clip-path:inset(0)] align-middle"
+      className={`inline-flex align-middle${isClipped ? " overflow-hidden [clip-path:inset(0)]" : ""}`}
     >
       <span
         data-slide
-        className={`inline-flex will-change-transform ${buffer} ${slideClassName}`}
+        className={`inline-flex will-change-transform  ${slideClassName}`}
       >
         {children}
       </span>
@@ -117,26 +98,49 @@ function Photo({
 }: {
   src: string;
   alt: string;
-  rotate: string;
+  rotate?: string;
 }) {
   return (
     <span
-      className={`relative inline-block shrink-0 ${rotate}
-      w-[60px]  h-[42px]   sm:w-[88px]  sm:h-[62px]
-      md:w-[120px] md:h-[84px] lg:w-[160px] lg:h-[112px] xl:w-[210px] xl:h-[146px]`}
+      className={`relative inline-block shrink-0
+      w-[4.2rem] h-[1.4rem]
+      sm:w-[5.4rem] sm:h-[1.85rem]
+      md:w-[7.8rem] md:h-[2.7rem]
+      lg:w-[10.8rem] lg:h-[3.7rem]
+      xl:w-[13.8rem] xl:h-[7.2rem] ${rotate ? ` ${rotate}` : ""}`}
     >
       <span
         data-img-clip
-        className="absolute inset-0 rounded-lg overflow-hidden"
+        className="absolute inset-0 rounded-md overflow-hidden"
       >
         <Image
           src={src}
           alt={alt}
-          width={210}
-          height={146}
+          width={320}
+          height={110}
           className="w-full h-full object-cover"
         />
       </span>
+    </span>
+  );
+}
+
+// Small lightning-bolt / spark deco between CODE and ANIMATIONS
+function Deco() {
+  return (
+    <span className="inline-flex items-center self-center mx-[0.05em]">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-[0.4em] h-[0.4em] text-accent"
+        aria-hidden="true"
+      >
+        <path
+          d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z"
+          fill="currentColor"
+        />
+      </svg>
     </span>
   );
 }
@@ -147,7 +151,7 @@ function renderEntry(entry: Entry, i: number) {
   if (entry.kind === "image") {
     return (
       <RevealWrapper key={i} phrase={entry.phrase} kind="image">
-        <Photo src={entry.src} alt={entry.alt} rotate={entry.rotate} />
+        <Photo src={entry.src} alt={entry.alt} />
       </RevealWrapper>
     );
   }
@@ -159,9 +163,9 @@ function renderEntry(entry: Entry, i: number) {
         phrase={entry.phrase}
         kind="design"
         slideClassName="
-          bg-accent text-white font-bricolage italic
+          bg-accent text-white font-bricolage font-black italic
           rounded-md md:rounded-lg pt-[0.05em] pb-[0.1em]
-          items-center leading-none
+          items-center leading-none text-title
         "
       >
         <span data-design-clip className="pr-[0.3em]">
@@ -169,6 +173,10 @@ function renderEntry(entry: Entry, i: number) {
         </span>
       </RevealWrapper>
     );
+  }
+
+  if (entry.kind === "deco") {
+    return <Deco key={i} />;
   }
 
   const e = entry as Extract<Entry, { kind?: "text" }>;
@@ -216,15 +224,27 @@ export default function Presentation() {
 
       <div
         className="
-        flex flex-wrap items-center justify-center
-        font-sans font-semibold uppercase
-        tracking-[-0.07em] leading-[0.95]
+        flex flex-col items-center
+        font-sans font-black text-title
+        tracking-[-0.07em] leading-none
         text-[1.75rem]  sm:text-[2.25rem]
-        md:text-[3.25rem] lg:text-[4.5rem] xl:text-[5.75rem]
-        gap-x-[0.15em]
+        md:text-[3.25rem] lg:text-[4.5rem] xl:text-[7rem]
+        gap-y-[0.06em]
       "
       >
-        {SEQUENCE.map((entry, i) => renderEntry(entry, i))}
+        {Array.from({ length: Math.ceil(SEQUENCE.length / 4) }, (_, row) => (
+          <div
+            key={row}
+            className="flex flex-wrap items-center justify-center gap-x-[0.15em]"
+          >
+            {(
+              SEQUENCE.slice(
+                row * 4,
+                row * 4 + 4,
+              ) as (typeof SEQUENCE)[number][]
+            ).map((entry, i) => renderEntry(entry, row * 4 + i))}
+          </div>
+        ))}
       </div>
     </section>
   );

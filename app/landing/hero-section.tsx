@@ -153,6 +153,7 @@ export default function HeroSection() {
           <div className="flex justify-center">
             <h1
               ref={titleRef}
+              data-chips-zone
               className="pointer-events-auto font-bold text-center font-bricolage text-[5.1rem] leading-[0.88] tracking-[-0.05em] text-title sm:text-[7.2rem] md:text-[9.5rem] lg:text-[11.5rem] xl:text-[150px]"
             >
               Öpi

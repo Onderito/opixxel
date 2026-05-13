@@ -44,6 +44,7 @@ export default function Projects() {
   const yTo = useRef<gsap.QuickToFunc | null>(null);
   const cursorXTo = useRef<gsap.QuickToFunc | null>(null);
   const cursorYTo = useRef<gsap.QuickToFunc | null>(null);
+  const labelReady = useRef(false);
 
   useEffect(() => {
     const el = labelRef.current;
@@ -69,17 +70,28 @@ export default function Projects() {
     const rect = containerRef.current?.getBoundingClientRect();
     const label = labelRef.current;
     if (!rect || !label) return;
-    // Label : décalé en bas à droite du curseur
-    xTo.current?.(e.clientX - rect.left + 24);
-    yTo.current?.(e.clientY - rect.top + 16);
-    // Curseur : collé à la souris, pointe en haut à gauche
-    cursorXTo.current?.(e.clientX - rect.left);
-    cursorYTo.current?.(e.clientY - rect.top);
+
+    const lx = e.clientX - rect.left + 24;
+    const ly = e.clientY - rect.top + 16;
+    const cx = e.clientX - rect.left;
+    const cy = e.clientY - rect.top;
+
+    if (!labelReady.current) {
+      gsap.set(label, { x: lx, y: ly });
+      gsap.set(cursorRef.current, { x: cx, y: cy });
+      labelReady.current = true;
+    }
+
+    xTo.current?.(lx);
+    yTo.current?.(ly);
+    cursorXTo.current?.(cx);
+    cursorYTo.current?.(cy);
   };
 
   const handleEnter = (index: number) => {
     setLabelText(projects[index].title);
     setActiveIndex(index);
+    labelReady.current = false;
     gsap.to(labelRef.current, {
       opacity: 1,
       scale: 1,
