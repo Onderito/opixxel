@@ -7,10 +7,10 @@ import { useHeroChips } from "@/animation-gsap/use-hero-chips";
 
 const navigation = [
   "Accueil",
-  "A propos",
-  "Realisations",
-  "Le process",
-  "Tarifs",
+  "Qui suis-je",
+  "Projets",
+  "Méthode",
+  "Offres",
   "Contact",
 ];
 
@@ -60,7 +60,10 @@ export default function HeroSection() {
   const { sectionRef: chipsRef } = useHeroChips();
 
   return (
-    <section ref={chipsRef} className="relative min-h-screen overflow-hidden bg-canvas">
+    <section
+      ref={chipsRef}
+      className="relative min-h-screen overflow-hidden bg-canvas"
+    >
       <span
         className="pointer-events-none absolute right-[11%] top-[16%] hidden h-44 w-44 opacity-50 md:block"
         aria-hidden="true"
@@ -193,9 +196,8 @@ export default function HeroSection() {
             ref={leftCopyRef}
             className="w-full font-light max-w-none text-[1.05rem] leading-[1.35] sm:max-w-[18ch] md:max-w-[24ch] md:text-[1.15rem] xl:max-w-[34ch]"
           >
-            Design Engineer freelance. De la maquette au code anime. Je
-            construis l&apos;interface <br className="hidden xl:block" />{" "}
-            entiere.
+            Design Engineer, de la maquette au code animé. Je construis
+            l&apos;interface <br className="hidden xl:block" /> entiere.
           </p>
           <p
             ref={rightCopyRef}

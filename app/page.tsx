@@ -4,7 +4,6 @@ import Pricing from "@/app/landing/pricing";
 import Projects from "@/app/landing/projects";
 import Step from "@/app/landing/step";
 import Footer from "@/app/landing/footer";
-import SmoothScroll from "@/app/landing/smooth-scroll";
 
 function Section({
   children,
@@ -25,7 +24,6 @@ function Section({
 export default function Home() {
   return (
     <>
-      <SmoothScroll />
       <HeroSection />
       <Section bg="bg-surface">
         <Presentation />

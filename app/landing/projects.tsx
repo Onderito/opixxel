@@ -35,51 +35,48 @@ export default function Projects() {
   const { ref: headerRef } = useTextReveal();
   const containerRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLDivElement>(null);
+  const cursorRef = useRef<HTMLDivElement>(null);
+
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [labelText, setLabelText] = useState(projects[0].title);
-
-  const cursorRef = useRef<HTMLDivElement>(null);
 
   const xTo = useRef<gsap.QuickToFunc | null>(null);
   const yTo = useRef<gsap.QuickToFunc | null>(null);
   const cursorXTo = useRef<gsap.QuickToFunc | null>(null);
   const cursorYTo = useRef<gsap.QuickToFunc | null>(null);
-  const labelReady = useRef(false);
+
+  // true dès que le label est visible à l'écran
+  const isVisible = useRef(false);
+  // dernière position connue du curseur (viewport)
+  const lastPointer = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
-    const el = labelRef.current;
-    if (!el) return;
-    gsap.set(el, { opacity: 0, scale: 0.88, rotation: -8 });
-    xTo.current = gsap.quickTo(el, "x", { duration: 0.55, ease: "power3.out" });
-    yTo.current = gsap.quickTo(el, "y", { duration: 0.55, ease: "power3.out" });
-
+    const label = labelRef.current;
     const cursor = cursorRef.current;
-    if (!cursor) return;
+    if (!label || !cursor) return;
+
+    gsap.set(label, { opacity: 0, scale: 0.88, rotation: -8 });
     gsap.set(cursor, { opacity: 0 });
-    cursorXTo.current = gsap.quickTo(cursor, "x", {
-      duration: 0.1,
-      ease: "power2.out",
-    });
-    cursorYTo.current = gsap.quickTo(cursor, "y", {
-      duration: 0.1,
-      ease: "power2.out",
-    });
+
+    xTo.current = gsap.quickTo(label, "x", { duration: 0.55, ease: "power3.out" });
+    yTo.current = gsap.quickTo(label, "y", { duration: 0.55, ease: "power3.out" });
+    cursorXTo.current = gsap.quickTo(cursor, "x", { duration: 0.1, ease: "power2.out" });
+    cursorYTo.current = gsap.quickTo(cursor, "y", { duration: 0.1, ease: "power2.out" });
   }, []);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  // Positionne le label (snap ou smooth) à partir de coords viewport
+  const moveTo = (clientX: number, clientY: number, snap = false) => {
     const rect = containerRef.current?.getBoundingClientRect();
-    const label = labelRef.current;
-    if (!rect || !label) return;
+    if (!rect) return;
 
-    const lx = e.clientX - rect.left + 24;
-    const ly = e.clientY - rect.top + 16;
-    const cx = e.clientX - rect.left;
-    const cy = e.clientY - rect.top;
+    const lx = clientX - rect.left + 24;
+    const ly = clientY - rect.top + 16;
+    const cx = clientX - rect.left;
+    const cy = clientY - rect.top;
 
-    if (!labelReady.current) {
-      gsap.set(label, { x: lx, y: ly });
+    if (snap) {
+      gsap.set(labelRef.current, { x: lx, y: ly });
       gsap.set(cursorRef.current, { x: cx, y: cy });
-      labelReady.current = true;
     }
 
     xTo.current?.(lx);
@@ -88,25 +85,41 @@ export default function Projects() {
     cursorYTo.current?.(cy);
   };
 
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    lastPointer.current = { x: e.clientX, y: e.clientY };
+    // Snap uniquement au premier mouvement (label pas encore visible)
+    moveTo(e.clientX, e.clientY, !isVisible.current);
+  };
+
   const handleEnter = (index: number) => {
     setLabelText(projects[index].title);
     setActiveIndex(index);
-    labelReady.current = false;
-    gsap.to(labelRef.current, {
-      opacity: 1,
-      scale: 1,
-      duration: 0.35,
-      ease: "power3.out",
-      overwrite: "auto",
-    });
-    gsap.to(cursorRef.current, {
-      opacity: 1,
-      duration: 0.2,
-      overwrite: "auto",
-    });
+
+    const pos = lastPointer.current;
+
+    if (!isVisible.current) {
+      // Première apparition : snap position PUIS fade-in
+      if (pos) moveTo(pos.x, pos.y, true);
+      isVisible.current = true;
+      gsap.to(labelRef.current, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.35,
+        ease: "power3.out",
+        overwrite: "auto",
+      });
+      gsap.to(cursorRef.current, {
+        opacity: 1,
+        duration: 0.2,
+        overwrite: "auto",
+      });
+    }
+    // Si déjà visible (passage d'un projet à l'autre) : pas de fade, juste update text/index
   };
 
   const handleLeave = () => {
+    isVisible.current = false;
+    lastPointer.current = null;
     setActiveIndex(null);
     gsap.to(labelRef.current, {
       opacity: 0,
@@ -162,7 +175,6 @@ export default function Projects() {
                   activeIndex !== null && activeIndex !== index ? 0.3 : 1,
               }}
               onMouseEnter={() => handleEnter(index)}
-              onMouseLeave={handleLeave}
             >
               <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
                 <h3
@@ -183,11 +195,11 @@ export default function Projects() {
           </a>
         ))}
 
-        {/* Curseur pointer personnalisé — blanc, suit la souris précisément */}
+        {/* Curseur pointer personnalisé */}
         <div
           ref={cursorRef}
-          className="pointer-events-none absolute top-0 left-0 z-50 no-underline"
-          style={{ willChange: "transform" }}
+          className="pointer-events-none absolute top-0 left-0 z-50"
+          style={{ willChange: "transform", opacity: 0 }}
         >
           <svg
             width="20"
@@ -204,13 +216,13 @@ export default function Projects() {
           </svg>
         </div>
 
-        {/* Label flottant — suit la souris avec lag, -8deg, fond accent */}
+        {/* Label flottant */}
         <div
           ref={labelRef}
           className="pointer-events-none absolute top-0 left-0 bg-accent px-2 py-2 rounded-[10px]"
-          style={{ willChange: "transform" }}
+          style={{ willChange: "transform", opacity: 0 }}
         >
-          <span className="font- font-bold text-white text-4xl whitespace-nowrap">
+          <span className="font-bold text-white text-4xl whitespace-nowrap">
             {labelText}
           </span>
         </div>

@@ -16,14 +16,15 @@ export function useFooterScroll() {
       const cols = footer.querySelectorAll("[data-footer-col]");
       const brand = footer.querySelector<HTMLElement>("[data-footer-brand]");
 
-      // ── États initiaux ────────────────────────────────────────────────────
       gsap.set(tagline, { opacity: 0, y: 24 });
       gsap.set(cols, { opacity: 0, y: 32 });
-      gsap.set(brand, { clipPath: "inset(-20px 100% -10px 0)", letterSpacing: "-0.1em" });
+      gsap.set(brand, {
+        clipPath: "inset(-20px 100% -10px 0)",
+        letterSpacing: "-0.1em",
+      });
 
       const ST = { trigger: footer, start: "top 80%", once: true };
 
-      // ── Tagline ───────────────────────────────────────────────────────────
       gsap.to(tagline, {
         opacity: 1,
         y: 0,
@@ -32,7 +33,6 @@ export function useFooterScroll() {
         scrollTrigger: ST,
       });
 
-      // ── Colonnes nav en stagger ───────────────────────────────────────────
       gsap.to(cols, {
         opacity: 1,
         y: 0,
@@ -43,16 +43,17 @@ export function useFooterScroll() {
         scrollTrigger: ST,
       });
 
-      // ── Öpixxel — étirement de gauche à droite ────────────────────────────
-      // scaleX 0.08 → 1 depuis le bord gauche : les lettres semblent s'étirer
-      // letter-spacing part du négatif puis revient à 0 : renforce la sensation
       gsap.to(brand, {
         clipPath: "inset(-20px 0% -10px 0)",
         letterSpacing: "0em",
         duration: 1.6,
         ease: "power3.inOut",
         delay: 0.3,
-        scrollTrigger: { trigger: footer, start: "top 60%", once: true },
+        scrollTrigger: {
+          trigger: footer,
+          start: "50% 90%",
+          once: true,
+        },
       });
     }, footerRef);
 

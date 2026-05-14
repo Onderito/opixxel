@@ -62,6 +62,7 @@ function RevealWrapper({
   ease,
   kind,
   slideClassName = "",
+  outerClassName = "",
   children,
 }: {
   phrase: string;
@@ -70,6 +71,7 @@ function RevealWrapper({
   ease?: string;
   kind: string;
   slideClassName?: string;
+  outerClassName?: string;
   children: React.ReactNode;
 }) {
   const isClipped = kind !== "text";
@@ -79,7 +81,7 @@ function RevealWrapper({
       data-dir={dir}
       data-delay={delay || undefined}
       data-ease={ease || undefined}
-      className={`inline-flex align-middle${isClipped ? " overflow-hidden [clip-path:inset(0)]" : ""}`}
+      className={`inline-flex align-middle${isClipped ? " overflow-hidden [clip-path:inset(0)]" : ""}${outerClassName ? ` ${outerClassName}` : ""}`}
     >
       <span
         data-slide
@@ -150,7 +152,7 @@ type Entry = (typeof SEQUENCE)[number];
 function renderEntry(entry: Entry, i: number) {
   if (entry.kind === "image") {
     return (
-      <RevealWrapper key={i} phrase={entry.phrase} kind="image">
+      <RevealWrapper key={i} phrase={entry.phrase} kind="image" outerClassName="mr-[-0.07em]">
         <Photo src={entry.src} alt={entry.alt} />
       </RevealWrapper>
     );
