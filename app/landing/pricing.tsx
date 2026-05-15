@@ -190,7 +190,10 @@ function PricingCard({ plan }: { plan: (typeof plans)[number] }) {
           {/* Titre + description */}
           <div className="flex flex-col gap-2">
             {titleBordered ? (
-              <div data-pc-title className="w-fit border border-dashed border-accent p-1">
+              <div
+                data-pc-title
+                className="w-fit border border-dashed border-accent p-1"
+              >
                 <h3 className="font-manrope font-medium text-[28px] text-white tracking-[-0.02em] leading-none">
                   {title}
                 </h3>
@@ -248,7 +251,9 @@ function PricingCard({ plan }: { plan: (typeof plans)[number] }) {
       {/* ── CTA bas droite ── */}
       <div data-pc-cta className="mt-auto pt-8 flex flex-col items-end gap-0.5">
         <a
-          href="#contact"
+          href="https://calendly.com/ulas-onder/30min"
+          target="_blank"
+          rel="noopener noreferrer"
           className={`font-manrope text-base tracking-[-0.02em] hover:text-accent transition-colors duration-200 ${
             dark ? "text-white" : "text-title"
           }`}
@@ -276,11 +281,20 @@ export default function Pricing() {
 
   return (
     <div ref={sectionRef}>
-      <div ref={headerRef} className="flex flex-wrap items-center gap-x-8 gap-y-2">
-        <span data-eyebrow className="font-manrope font-light text-accent text-base">
+      <div
+        ref={headerRef}
+        className="flex flex-wrap items-center gap-x-8 gap-y-2"
+      >
+        <span
+          data-eyebrow
+          className="font-manrope font-light text-accent text-base"
+        >
           // parlons budget
         </span>
-        <h2 data-heading className="font-bricolage font-normal text-white text-[32px] md:text-[44px] xl:text-[56px] tracking-[-0.02em] leading-none">
+        <h2
+          data-heading
+          className="font-bricolage font-normal text-white heading-2"
+        >
           Les cartes sur table.
         </h2>
       </div>

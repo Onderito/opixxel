@@ -1,6 +1,6 @@
 "use client";
 
-import { VennIllustration } from "@/components/illustrations/venn";
+import { ClipboardIllustration } from "@/components/illustrations/clipboard";
 import { WireframeIllustration } from "@/components/illustrations/wireframe";
 import { RocketIllustration } from "@/components/illustrations/rocket";
 import { useStepScroll } from "@/animation-gsap/use-step-scroll";
@@ -56,13 +56,13 @@ function StepCard({
 }: {
   number: string;
   title: string;
-  description: string;
+  description: React.ReactNode;
   chip: string;
 }) {
   return (
     <div
       data-step-card
-      className="relative flex flex-col items-center justify-center gap-4 bg-canvas border border-stroke rounded-sm px-8 py-12 text-center w-full xl:w-[413px] xl:h-[539px]"
+      className="relative flex flex-col items-center justify-center gap-4 bg-canvas border border-stroke rounded-sm px-8 py-12 text-center w-full min-h-[360px] xl:w-[413px] xl:h-[539px] xl:min-h-0"
     >
       <CornerMarks />
       <PlusAccent />
@@ -72,10 +72,10 @@ function StepCard({
           {number}
         </p>
         <div className="flex flex-col items-center gap-[4px]">
-          <h3 className="font-manrope font-normal text-title text-[32px] tracking-tight leading-none">
+          <h3 className="font-manrope font-normal text-title heading-3 tracking-tight leading-none">
             {title}
           </h3>
-          <p className="font-manrope font-light text-body text-lg tracking-[-0.02em] max-w-[30ch]">
+          <p className="font-manrope font-light text-body tracking-[-0.02em] max-w-[30ch]">
             {description}
           </p>
         </div>
@@ -146,8 +146,15 @@ const steps = [
   {
     number: "03",
     title: "Tu lances",
-    description:
-      "Je te livre un site propre, performant, prêt à être mis en ligne. Tu repars avec les clés.",
+    description: (
+      <>
+        Je te livre un site propre, performant, prêt à être mis en ligne.{" "}
+        <span className="hidden xl:inline">
+          <br />
+        </span>
+        Tu repars avec les clés.
+      </>
+    ),
     chip: "livraison",
   },
 ];
@@ -180,7 +187,7 @@ export default function Step() {
         {/* Étape 01 + Venn côte à côte */}
         <div className="flex items-center justify-between">
           <StepCard {...steps[0]} />
-          <VennIllustration />
+          <ClipboardIllustration />
         </div>
 
         <div className="flex justify-center py-6">
@@ -205,7 +212,9 @@ export default function Step() {
 
         <div data-step-cta className="flex justify-center mt-20 opacity-0">
           <a
-            href="#contact"
+            href="https://calendly.com/ulas-onder/30min"
+            target="_blank"
+            rel="noopener noreferrer"
             className="relative font-bricolage italic text-title text-4xl md:text-5xl hover:text-accent transition-colors duration-300 flex flex-col items-center gap-3"
           >
             → On démarre ?

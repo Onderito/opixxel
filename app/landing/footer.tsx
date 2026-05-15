@@ -55,13 +55,29 @@ function Underline({ width = 220 }: { width?: number }) {
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
-const explorer = ["Réalisations", "La méthode", "Tarifs", "Contact"];
-const social = ["LinkedIn", "Behance", "X"];
+const explorer: { label: string; href: string }[] = [
+  { label: "Réalisations", href: "#projets" },
+  { label: "La méthode", href: "#methode" },
+  { label: "Tarifs", href: "#offres" },
+  { label: "Contact", href: "https://calendly.com/ulas-onder/30min" },
+];
+
+const social: { label: string; href: string }[] = [
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/ulasonder/" },
+  { label: "Pinterest", href: "https://fr.pinterest.com/ulasonder07/" },
+  { label: "X", href: "https://x.com/UnderDev0" },
+];
+
 const meta = [
   "© 2026 Opixxel",
   "Politique de confidentialité",
   "Mentions légales",
 ];
+
+function scrollTo(href: string) {
+  const el = document.querySelector(href);
+  if (el) el.scrollIntoView({ behavior: "smooth" });
+}
 
 // ── Footer ────────────────────────────────────────────────────────────────────
 
@@ -90,9 +106,24 @@ export default function Footer() {
             <p className="font-manrope font-bold text-[20px] text-title leading-normal">
               Explorer
             </p>
-            <ul className="flex flex-col gap-[6px] font-manrope font-light text-[18px] text-label leading-normal cursor-pointer">
-              {explorer.map((item) => (
-                <li key={item}>{item}</li>
+            <ul className="flex flex-col gap-[6px] font-manrope font-light text-[18px] text-label leading-normal">
+              {explorer.map(({ label, href }) => (
+                <li key={label}>
+                  <a
+                    href={href}
+                    target={href.startsWith("http") ? "_blank" : undefined}
+                    rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+                    className="hover:text-title transition-colors duration-200 cursor-pointer"
+                    onClick={(e) => {
+                      if (!href.startsWith("http")) {
+                        e.preventDefault();
+                        scrollTo(href);
+                      }
+                    }}
+                  >
+                    {label}
+                  </a>
+                </li>
               ))}
             </ul>
           </div>
@@ -102,18 +133,32 @@ export default function Footer() {
             <p className="font-manrope font-bold text-[20px] text-title leading-normal">
               Suivez-moi
             </p>
-            <ul className="flex flex-col gap-[6px] font-manrope font-light text-[18px] text-label leading-normal cursor-pointer">
-              {social.map((item) => (
-                <li key={item}>{item}</li>
+            <ul className="flex flex-col gap-[6px] font-manrope font-light text-[18px] text-label leading-normal">
+              {social.map(({ label, href }) => (
+                <li key={label}>
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-title transition-colors duration-200 cursor-pointer"
+                  >
+                    {label}
+                  </a>
+                </li>
               ))}
             </ul>
           </div>
 
           {/* CTA + meta */}
           <div data-footer-col className="flex flex-col xl:w-[235px]">
-            <p className="font-manrope font-bold text-[20px] text-accent leading-normal">
+            <a
+              href="https://calendly.com/ulas-onder/30min"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-manrope font-bold text-[20px] text-accent leading-normal hover:opacity-80 transition-opacity duration-200 cursor-pointer"
+            >
               Démarrer mon projet ↗
-            </p>
+            </a>
             <div className="mt-[10px]">
               <Underline />
             </div>

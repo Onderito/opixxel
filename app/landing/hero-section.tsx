@@ -5,14 +5,20 @@ import { useHeroReveal } from "@/animation-gsap/use-hero-reveal";
 import { useHeroMotionRefs } from "@/animation-gsap/use-hero-motion-refs";
 import { useHeroChips } from "@/animation-gsap/use-hero-chips";
 
-const navigation = [
-  "Accueil",
-  "Qui suis-je",
-  "Projets",
-  "Méthode",
-  "Offres",
-  "Contact",
+const navigation: { label: string; href: string }[] = [
+  { label: "Accueil", href: "#" },
+  { label: "Qui suis-je", href: "#qui-suis-je" },
+  { label: "Projets", href: "#projets" },
+  { label: "Méthode", href: "#methode" },
+  { label: "Offres", href: "#offres" },
+  { label: "Contact", href: "https://calendly.com/ulas-onder/30min" },
 ];
+
+function scrollTo(href: string) {
+  if (href === "#" || href.startsWith("http")) return;
+  const el = document.querySelector(href);
+  if (el) el.scrollIntoView({ behavior: "smooth" });
+}
 
 const firstReel = [
   "q",
@@ -112,9 +118,21 @@ export default function HeroSection() {
               className="hidden items-center gap-8 pt-2 text-[15px] font-manrope text-label xl:flex"
               aria-label="Navigation principale"
             >
-              {navigation.map((item) => (
-                <a key={item} href="#" className="hover:text-title">
-                  {item}
+              {navigation.map(({ label, href }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target={href.startsWith("http") ? "_blank" : undefined}
+                  rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  className="hover:text-title transition-colors duration-200"
+                  onClick={(e) => {
+                    if (!href.startsWith("http") && href !== "#") {
+                      e.preventDefault();
+                      scrollTo(href);
+                    }
+                  }}
+                >
+                  {label}
                 </a>
               ))}
             </nav>
@@ -122,7 +140,9 @@ export default function HeroSection() {
 
           <a
             ref={ctaRef}
-            href="#"
+            href="https://calendly.com/ulas-onder/30min"
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-block w-fit self-center border-b border-accent pb-2 text-right text-[0.95rem] font-medium leading-none text-title sm:text-base xl:self-start"
           >
             Je commence mon projet
@@ -138,14 +158,22 @@ export default function HeroSection() {
             aria-label="Navigation mobile"
           >
             <div className="flex flex-col gap-4 text-base text-title">
-              {navigation.map((item) => (
+              {navigation.map(({ label, href }) => (
                 <a
-                  key={item}
-                  href="#"
-                  className="hover:text-accent"
-                  onClick={() => setMenuOpen(false)}
+                  key={label}
+                  href={href}
+                  target={href.startsWith("http") ? "_blank" : undefined}
+                  rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  className="hover:text-accent transition-colors duration-200"
+                  onClick={(e) => {
+                    setMenuOpen(false);
+                    if (!href.startsWith("http") && href !== "#") {
+                      e.preventDefault();
+                      scrollTo(href);
+                    }
+                  }}
                 >
-                  {item}
+                  {label}
                 </a>
               ))}
             </div>
@@ -161,7 +189,7 @@ export default function HeroSection() {
             >
               Öpi
               <span
-                className="relative inline-flex translate-y-[0.06em] italic leading-none text-accent"
+                className="relative inline-flex translate-y-[0.06em] italic leading-none text-accent overflow-hidden"
                 aria-label="xx"
                 role="text"
               >

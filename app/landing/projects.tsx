@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTextReveal } from "@/animation-gsap/use-text-reveal";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const projects = [
   {
@@ -45,6 +48,33 @@ export default function Projects() {
   const cursorXTo = useRef<gsap.QuickToFunc | null>(null);
   const cursorYTo = useRef<gsap.QuickToFunc | null>(null);
 
+  const listRef = useRef<HTMLDivElement>(null);
+
+  // ── Animation rows au scroll ──────────────────────────────────
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+
+    const ctx = gsap.context(() => {
+      const rows = gsap.utils.toArray<HTMLElement>("a", list);
+
+      rows.forEach((row, i) => {
+        gsap.set(row, { opacity: 0, y: 40, x: i % 2 === 0 ? -30 : 30 });
+        gsap.to(row, {
+          opacity: 1,
+          y: 0,
+          x: 0,
+          duration: 0.6,
+          ease: "power3.out",
+          delay: i * 0.08,
+          scrollTrigger: { trigger: list, start: "top 82%", once: true },
+        });
+      });
+    }, list);
+
+    return () => ctx.revert();
+  }, []);
+
   // true dès que le label est visible à l'écran
   const isVisible = useRef(false);
   // dernière position connue du curseur (viewport)
@@ -58,10 +88,22 @@ export default function Projects() {
     gsap.set(label, { opacity: 0, scale: 0.88, rotation: -8 });
     gsap.set(cursor, { opacity: 0 });
 
-    xTo.current = gsap.quickTo(label, "x", { duration: 0.55, ease: "power3.out" });
-    yTo.current = gsap.quickTo(label, "y", { duration: 0.55, ease: "power3.out" });
-    cursorXTo.current = gsap.quickTo(cursor, "x", { duration: 0.1, ease: "power2.out" });
-    cursorYTo.current = gsap.quickTo(cursor, "y", { duration: 0.1, ease: "power2.out" });
+    xTo.current = gsap.quickTo(label, "x", {
+      duration: 0.55,
+      ease: "power3.out",
+    });
+    yTo.current = gsap.quickTo(label, "y", {
+      duration: 0.55,
+      ease: "power3.out",
+    });
+    cursorXTo.current = gsap.quickTo(cursor, "x", {
+      duration: 0.1,
+      ease: "power2.out",
+    });
+    cursorYTo.current = gsap.quickTo(cursor, "y", {
+      duration: 0.1,
+      ease: "power2.out",
+    });
   }, []);
 
   // Positionne le label (snap ou smooth) à partir de coords viewport
@@ -91,15 +133,18 @@ export default function Projects() {
     moveTo(e.clientX, e.clientY, !isVisible.current);
   };
 
-  const handleEnter = (index: number) => {
+  const handleEnter = (index: number, e: React.MouseEvent) => {
+    if (window.matchMedia("(max-width: 767px)").matches) return;
+
+    // On prend la position de l'event directement — fiable même sans mousemove préalable
+    const pos = { x: e.clientX, y: e.clientY };
+    lastPointer.current = pos;
+
     setLabelText(projects[index].title);
     setActiveIndex(index);
 
-    const pos = lastPointer.current;
-
     if (!isVisible.current) {
-      // Première apparition : snap position PUIS fade-in
-      if (pos) moveTo(pos.x, pos.y, true);
+      moveTo(pos.x, pos.y, true);
       isVisible.current = true;
       gsap.to(labelRef.current, {
         opacity: 1,
@@ -114,7 +159,6 @@ export default function Projects() {
         overwrite: "auto",
       });
     }
-    // Si déjà visible (passage d'un projet à l'autre) : pas de fade, juste update text/index
   };
 
   const handleLeave = () => {
@@ -155,7 +199,10 @@ export default function Projects() {
 
       {/* Liste */}
       <div
-        ref={containerRef}
+        ref={(el) => {
+          (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+          (listRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+        }}
         className="relative flex flex-col divide-y divide-[#E3E1DC] border-y border-[#E3E1DC] md:cursor-none"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleLeave}
@@ -169,26 +216,26 @@ export default function Projects() {
             rel="noreferrer"
           >
             <div
-              className="flex items-start justify-between gap-4 py-6 font-dm-sans md:items-center transition-opacity duration-300"
+              className="flex items-center justify-between gap-4 py-6 font-dm-sans transition-opacity duration-300"
               style={{
-                opacity:
-                  activeIndex !== null && activeIndex !== index ? 0.3 : 1,
+                opacity: activeIndex !== null && activeIndex !== index ? 0.3 : 1,
               }}
-              onMouseEnter={() => handleEnter(index)}
+              onMouseEnter={(e) => handleEnter(index, e)}
             >
-              <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+              {/* Mobile : flex-col titre + desc / Desktop : row */}
+              <div className="flex flex-col gap-0.5 md:flex-row md:flex-wrap md:items-baseline md:gap-x-2 md:gap-y-1">
                 <h3
-                  className={`heading-3 font-normal transition-colors duration-200 ${
+                  className={`heading-3 font-regular transition-colors duration-200 ${
                     activeIndex === index ? "text-accent" : "text-title"
                   }`}
                 >
                   {p.title}
                 </h3>
-                <p className="text-[12px] font-extralight md:text-[16px] xl:text-[20px]">
+                <p className="text-[14px] font-extralight text-body md:text-[16px] xl:text-[20px]">
                   {p.description}
                 </p>
               </div>
-              <span className="text-[10px] font-light text-label md:text-[20px]">
+              <span className="text-[10px] font-light text-label shrink-0 md:text-[20px]">
                 {p.date}
               </span>
             </div>

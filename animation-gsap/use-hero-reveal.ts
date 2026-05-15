@@ -25,13 +25,10 @@ export function useHeroReveal({
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
+
     const getFinalOffset = (element: HTMLElement) => {
       const firstLetter = element.firstElementChild as HTMLElement | null;
-
-      if (!firstLetter) {
-        return 0;
-      }
-
+      if (!firstLetter) return 0;
       return -((element.children.length - 1) * firstLetter.offsetHeight);
     };
 
@@ -52,11 +49,7 @@ export function useHeroReveal({
     gsap.set(rightCopyElement, { autoAlpha: 0, x: 72 });
     gsap.set(reelElements, { y: 0 });
 
-    const timeline = gsap.timeline({
-      defaults: {
-        ease: "power3.out",
-      },
-    });
+    const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
 
     timeline.to(
       reelElements,
@@ -69,52 +62,24 @@ export function useHeroReveal({
       0,
     );
 
-    // Le reste s'anime en parallèle pendant que les XX déroulent encore
     timeline.addLabel("contentReveal", 0.6);
 
     if (navElement) {
-      timeline.to(
-        navElement,
-        {
-          autoAlpha: 1,
-          x: 0,
-          duration: 0.8,
-        },
-        "contentReveal",
-      );
+      timeline.to(navElement, { autoAlpha: 1, x: 0, duration: 0.8 }, "contentReveal");
     }
 
     timeline.to(
       [ctaElement, rightCopyElement],
-      {
-        autoAlpha: 1,
-        x: 0,
-        duration: 0.8,
-        stagger: 0.06,
-      },
+      { autoAlpha: 1, x: 0, duration: 0.8, stagger: 0.06 },
       "contentReveal",
     );
 
-    timeline.to(
-      leftCopyElement,
-      {
-        autoAlpha: 1,
-        x: 0,
-        duration: 0.8,
-      },
-      "contentReveal",
-    );
+    timeline.to(leftCopyElement, { autoAlpha: 1, x: 0, duration: 0.8 }, "contentReveal");
 
     return () => {
       timeline.kill();
       gsap.set(
-        [
-          navElement,
-          ctaElement,
-          leftCopyElement,
-          rightCopyElement,
-          ...reelElements,
-        ],
+        [navElement, ctaElement, leftCopyElement, rightCopyElement, ...reelElements],
         { clearProps: "all" },
       );
     };

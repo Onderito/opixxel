@@ -48,14 +48,14 @@
   }
 
   .heading-2 {
-    @apply font-medium text-[28px] tracking-[-2px]
+    @apply font-medium text-[32px] tracking-[-2px]
            md:text-[48px]
            xl:text-[56px] xl:tracking-[-0.02em] leading-tight;
   }
 
   .heading-3 {
-    @apply text-[18px] tracking-[-0.5px]
-           md:text-[20px] xl:text-[26px] leading-snug;
+    @apply text-[24px] tracking-[-0.5px]
+           md:text-[28px] xl:text-[32px] leading-snug;
   }
 
   .heading-4 {

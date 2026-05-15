@@ -33,7 +33,11 @@ export function usePresentationScroll() {
       // ── Bolt : état initial
       const bolt = section.querySelector<SVGPathElement>("[data-bolt]");
       if (bolt) {
-        gsap.set(bolt, { strokeDasharray: 1, strokeDashoffset: 1, fillOpacity: 0 });
+        gsap.set(bolt, {
+          strokeDasharray: 1,
+          strokeDashoffset: 1,
+          fillOpacity: 0,
+        });
       }
 
       const mm = gsap.matchMedia();
@@ -56,15 +60,25 @@ export function usePresentationScroll() {
             i * 0.5,
           );
 
-          const inner = g.querySelector<HTMLElement>("[data-img-clip], [data-design-clip]");
+          const inner = g.querySelector<HTMLElement>(
+            "[data-img-clip], [data-design-clip]",
+          );
           if (inner) {
             gsap.set(inner, { scale: 1.08, transformOrigin: "center center" });
-            tl.to(inner, { scale: 1, duration: 0.7, ease: "power2.out" }, i * 0.5);
+            tl.to(
+              inner,
+              { scale: 1, duration: 0.7, ease: "power2.out" },
+              i * 0.5,
+            );
           }
         });
 
         if (bolt) {
-          tl.to(bolt, { strokeDashoffset: 0, duration: 1, ease: "power2.out" }, 0.5);
+          tl.to(
+            bolt,
+            { strokeDashoffset: 0, duration: 1, ease: "power2.out" },
+            0.5,
+          );
           tl.to(bolt, { fillOpacity: 1, duration: 0.5, ease: "none" }, 1.2);
         }
       });
@@ -87,15 +101,25 @@ export function usePresentationScroll() {
             i * 0.5,
           );
 
-          const inner = g.querySelector<HTMLElement>("[data-img-clip], [data-design-clip]");
+          const inner = g.querySelector<HTMLElement>(
+            "[data-img-clip], [data-design-clip]",
+          );
           if (inner) {
             gsap.set(inner, { scale: 1.08, transformOrigin: "center center" });
-            tl.to(inner, { scale: 1, duration: 0.7, ease: "power2.out" }, i * 0.5);
+            tl.to(
+              inner,
+              { scale: 1, duration: 0.7, ease: "power2.out" },
+              i * 0.5,
+            );
           }
         });
 
         if (bolt) {
-          tl.to(bolt, { strokeDashoffset: 0, duration: 1, ease: "power2.out" }, 0.5);
+          tl.to(
+            bolt,
+            { strokeDashoffset: 0, duration: 1, ease: "power2.out" },
+            0.5,
+          );
           tl.to(bolt, { fillOpacity: 1, duration: 0.5, ease: "none" }, 1.2);
         }
       });
