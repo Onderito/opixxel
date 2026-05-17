@@ -164,14 +164,11 @@ export function useStepScroll() {
       const ctx = gsap.context(() => {
         const cards = gsap.utils.toArray<HTMLElement>("[data-step-card]", section);
 
-        cards.forEach((card, i) => {
-          const dir = i % 2 === 0 ? -60 : 60;
-          gsap.set(card, { opacity: 0, y: 50, x: dir, rotate: i % 2 === 0 ? -3 : 3 });
+        cards.forEach((card) => {
+          gsap.set(card, { opacity: 0, y: 50 });
           gsap.to(card, {
             opacity: 1,
             y: 0,
-            x: 0,
-            rotate: 0,
             duration: 0.65,
             ease: "back.out(1.5)",
             scrollTrigger: { trigger: card, start: "top 88%" },
