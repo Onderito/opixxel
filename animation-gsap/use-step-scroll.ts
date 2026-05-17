@@ -174,6 +174,17 @@ export function useStepScroll() {
             scrollTrigger: { trigger: card, start: "top 88%" },
           });
         });
+
+        // ── CTA mobile ─────────────────────────────────────────
+        const cta      = section.querySelector<HTMLElement>("[data-step-cta-mobile]");
+        const ctaUnder = cta?.querySelector<HTMLElement>("[data-cta-underline]");
+
+        if (cta && ctaUnder) {
+          gsap.set(ctaUnder, { scaleX: 0, transformOrigin: "left center" });
+          const tl = gsap.timeline({ scrollTrigger: { trigger: cta, start: "top 90%" } });
+          tl.fromTo(cta, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.65, ease: "back.out(1.6)" });
+          tl.to(ctaUnder, { scaleX: 1, duration: 0.5, ease: "power3.inOut" }, "-=0.3");
+        }
       }, sectionRef);
 
       return () => ctx.revert();

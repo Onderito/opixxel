@@ -185,6 +185,22 @@ export default function Step() {
         ))}
       </div>
 
+      {/* CTA mobile + md */}
+      <div data-step-cta-mobile className="flex justify-center mt-14 xl:hidden opacity-0">
+        <a
+          href="https://calendly.com/ulas-onder/30min"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="relative font-bricolage italic text-title text-4xl md:text-5xl hover:text-accent transition-colors duration-300 flex flex-col items-center gap-3"
+        >
+          → On démarre ?
+          <span
+            className="block w-full h-[2px] bg-accent origin-left scale-x-0"
+            data-cta-underline
+          />
+        </a>
+      </div>
+
       {/* xl ─ layout alterné avec illustration + flèches */}
       <div data-step-xl className="hidden xl:flex xl:flex-col mt-10">
         {/* Étape 01 + Venn côte à côte */}

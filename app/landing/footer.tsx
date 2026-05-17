@@ -72,7 +72,10 @@ const social: { label: string; href: string }[] = [
 
 const meta: { label: string; href?: string }[] = [
   { label: "© 2026 Öpixxel" },
-  { label: "Politique de confidentialité", href: "/politique-de-confidentialite" },
+  {
+    label: "Politique de confidentialité",
+    href: "/politique-de-confidentialite",
+  },
   { label: "Mentions légales", href: "/mentions-legales" },
 ];
 
@@ -139,10 +142,7 @@ export default function Footer() {
           </div>
 
           {/* Suivez-moi */}
-          <div
-            data-footer-col
-            className="flex flex-col gap-[20px] shrink-0"
-          >
+          <div data-footer-col className="flex flex-col gap-[20px] shrink-0">
             <p className="font-manrope font-bold text-[20px] text-title leading-normal whitespace-nowrap">
               Suivez-moi
             </p>
@@ -164,16 +164,16 @@ export default function Footer() {
 
           {/* CTA + meta */}
           <div data-footer-col className="flex flex-col shrink-0">
-            <a
-              href="https://calendly.com/ulas-onder/30min"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-manrope font-bold text-[20px] text-accent leading-normal hover:opacity-80 transition-opacity duration-200 cursor-pointer whitespace-nowrap"
-            >
-              Démarrer mon projet ↗
-            </a>
-            <div className="mt-[10px]">
-              <Underline />
+            <div className="flex flex-col w-fit">
+              <a
+                href="https://calendly.com/ulas-onder/30min"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-manrope font-bold text-[20px] text-accent leading-normal hover:opacity-80 transition-opacity duration-200 cursor-pointer whitespace-nowrap"
+              >
+                Démarrer mon projet
+              </a>
+              <div className="mt-[10px] h-px w-full bg-[#999994] opacity-60" />
             </div>
             <ul className="flex flex-col gap-[6px] mt-[20px] font-manrope font-light text-[14px] text-label leading-normal">
               {meta.map(({ label, href }) => (

@@ -13,7 +13,7 @@ export function useLenis() {
       // Assez pour adoucir le scroll, trop court pour sentir un "scroll auto".
       lerp: 0.2,
       smoothWheel: true,
-      syncTouch: false,
+      syncTouch: true,
       wheelMultiplier: 1,
       touchMultiplier: 1.5,
     });
