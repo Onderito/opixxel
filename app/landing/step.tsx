@@ -148,11 +148,12 @@ const steps = [
     title: "Tu lances",
     description: (
       <>
-        Je te livre un site propre, performant, prêt à être mis en ligne.{" "}
+        Je te livre un site propre, performant, prêt à être mis en ligne. Tu
+        repars
         <span className="hidden xl:inline">
           <br />
         </span>
-        Tu repars avec les clés.
+        avec les clés.
       </>
     ),
     chip: "livraison",

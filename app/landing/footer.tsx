@@ -1,6 +1,7 @@
 "use client";
 
 import { useFooterScroll } from "@/animation-gsap/use-footer-scroll";
+import { OWithEyes } from "@/components/o-with-eyes";
 
 // ── Décoration "+" coin haut-gauche ──────────────────────────────────────────
 
@@ -85,25 +86,29 @@ export default function Footer() {
   const { footerRef } = useFooterScroll();
 
   return (
-    <footer ref={footerRef} className="relative bg-canvas min-h-screen overflow-hidden">
+    <footer
+      ref={footerRef}
+      className="relative bg-canvas min-h-screen overflow-hidden"
+    >
       {/* "+" décoration */}
       <div className="absolute left-[61px] top-[87px] hidden xl:block">
         <PlusCross />
       </div>
 
       {/* Header navigation */}
-      <div className="max-w-[1071px] mx-auto pt-10 xl:pt-[57px] px-6 xl:px-0">
+      <div className="max-w-[1100px] mx-auto pt-10 xl:pt-[57px] px-6 xl:px-0">
         <div className="flex flex-col xl:flex-row xl:items-start gap-10 xl:gap-[100px]">
           {/* Tagline */}
-          <p data-footer-tagline className="font-manrope font-bold text-[20px] text-title leading-normal">
-            Öpixxel transforme tes idées
-            <br />
-            en sites animés qui convertissent.
+          <p
+            data-footer-tagline
+            className="font-manrope font-bold text-[20px] text-title leading-normal"
+          >
+            Öpixxel transforme tes idées en sites animés qui convertissent.
           </p>
 
           {/* Explorer */}
-          <div data-footer-col className="flex flex-col gap-[20px] xl:w-[99px]">
-            <p className="font-manrope font-bold text-[20px] text-title leading-normal">
+          <div data-footer-col className="flex flex-col gap-[20px] shrink-0">
+            <p className="font-manrope font-bold text-[20px] text-title leading-normal whitespace-nowrap">
               Explorer
             </p>
             <ul className="flex flex-col gap-[6px] font-manrope font-light text-[18px] text-label leading-normal">
@@ -112,7 +117,11 @@ export default function Footer() {
                   <a
                     href={href}
                     target={href.startsWith("http") ? "_blank" : undefined}
-                    rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+                    rel={
+                      href.startsWith("http")
+                        ? "noopener noreferrer"
+                        : undefined
+                    }
                     className="hover:text-title transition-colors duration-200 cursor-pointer"
                     onClick={(e) => {
                       if (!href.startsWith("http")) {
@@ -129,8 +138,11 @@ export default function Footer() {
           </div>
 
           {/* Suivez-moi */}
-          <div data-footer-col className="flex flex-col gap-[20px] xl:w-[119px]">
-            <p className="font-manrope font-bold text-[20px] text-title leading-normal">
+          <div
+            data-footer-col
+            className="flex flex-col gap-[20px] shrink-0"
+          >
+            <p className="font-manrope font-bold text-[20px] text-title leading-normal whitespace-nowrap">
               Suivez-moi
             </p>
             <ul className="flex flex-col gap-[6px] font-manrope font-light text-[18px] text-label leading-normal">
@@ -150,12 +162,12 @@ export default function Footer() {
           </div>
 
           {/* CTA + meta */}
-          <div data-footer-col className="flex flex-col xl:w-[235px]">
+          <div data-footer-col className="flex flex-col shrink-0">
             <a
               href="https://calendly.com/ulas-onder/30min"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-manrope font-bold text-[20px] text-accent leading-normal hover:opacity-80 transition-opacity duration-200 cursor-pointer"
+              className="font-manrope font-bold text-[20px] text-accent leading-normal hover:opacity-80 transition-opacity duration-200 cursor-pointer whitespace-nowrap"
             >
               Démarrer mon projet ↗
             </a>
@@ -172,8 +184,12 @@ export default function Footer() {
       </div>
 
       {/* Texte géant "Öpixxel" — moitié visible */}
-      <p data-footer-brand className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 xl:translate-y-[calc(50%-50px)] font-bricolage font-bold leading-none whitespace-nowrap text-title text-[clamp(5.5rem,26vw,500px)] xl:text-[clamp(6rem,32vw,500px)]">
-        Öpi<span className="text-accent">xx</span>el
+      <p
+        data-footer-brand
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 xl:translate-y-[calc(50%-50px)] font-bricolage font-bold leading-none whitespace-nowrap text-title text-[clamp(5.5rem,26vw,500px)] xl:text-[clamp(6rem,32vw,500px)]"
+      >
+        <OWithEyes />
+        pi<span className="text-accent">xx</span>el
       </p>
     </footer>
   );

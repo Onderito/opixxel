@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
 import { useHeroReveal } from "@/animation-gsap/use-hero-reveal";
 import { useHeroMotionRefs } from "@/animation-gsap/use-hero-motion-refs";
-import { useHeroChips } from "@/animation-gsap/use-hero-chips";
+import { OWithEyes } from "@/components/o-with-eyes";
 
 const navigation: { label: string; href: string }[] = [
   { label: "Accueil", href: "#" },
@@ -63,13 +64,8 @@ export default function HeroSection() {
   const { navRef, ctaRef, leftCopyRef, rightCopyRef, titleRef } =
     useHeroMotionRefs();
   useHeroReveal({ navRef, ctaRef, leftCopyRef, rightCopyRef, titleRef });
-  const { sectionRef: chipsRef } = useHeroChips();
-
   return (
-    <section
-      ref={chipsRef}
-      className="relative min-h-screen overflow-hidden bg-canvas"
-    >
+    <section className="relative min-h-screen overflow-hidden bg-canvas">
       <span
         className="pointer-events-none absolute right-[11%] top-[16%] hidden h-44 w-44 opacity-50 md:block"
         aria-hidden="true"
@@ -115,7 +111,7 @@ export default function HeroSection() {
 
             <nav
               ref={navRef}
-              className="hidden items-center gap-8 pt-2 text-[15px] font-manrope text-label xl:flex"
+              className="hidden items-center gap-8 pt-2 text-[16px] font-manrope text-label xl:flex"
               aria-label="Navigation principale"
             >
               {navigation.map(({ label, href }) => (
@@ -123,7 +119,9 @@ export default function HeroSection() {
                   key={label}
                   href={href}
                   target={href.startsWith("http") ? "_blank" : undefined}
-                  rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  rel={
+                    href.startsWith("http") ? "noopener noreferrer" : undefined
+                  }
                   className="hover:text-title transition-colors duration-200"
                   onClick={(e) => {
                     if (!href.startsWith("http") && href !== "#") {
@@ -143,7 +141,7 @@ export default function HeroSection() {
             href="https://calendly.com/ulas-onder/30min"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block w-fit self-center border-b border-accent pb-2 text-right text-[0.95rem] font-medium leading-none text-title sm:text-base xl:self-start"
+            className="inline-block w-fit self-center border-b border-accent pb-2 text-right text-[0.95rem] font-medium leading-none text-title hover:text-accent transition-colors duration-200 sm:text-base xl:self-start"
           >
             Je commence mon projet
           </a>
@@ -163,7 +161,9 @@ export default function HeroSection() {
                   key={label}
                   href={href}
                   target={href.startsWith("http") ? "_blank" : undefined}
-                  rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  rel={
+                    href.startsWith("http") ? "noopener noreferrer" : undefined
+                  }
                   className="hover:text-accent transition-colors duration-200"
                   onClick={(e) => {
                     setMenuOpen(false);
@@ -184,10 +184,10 @@ export default function HeroSection() {
           <div className="flex justify-center">
             <h1
               ref={titleRef}
-              data-chips-zone
-              className="pointer-events-auto font-bold text-center font-bricolage text-[5.1rem] leading-[0.88] tracking-[-0.05em] text-title sm:text-[7.2rem] md:text-[9.5rem] lg:text-[11.5rem] xl:text-[150px]"
+              className="font-bold text-center font-bricolage text-[5.1rem] leading-[0.88] tracking-[-0.05em] text-title sm:text-[7.2rem] md:text-[9.5rem] lg:text-[11.5rem] xl:text-[150px]"
             >
-              Öpi
+              <OWithEyes />
+              pi
               <span
                 className="relative inline-flex translate-y-[0.06em] italic leading-none text-accent overflow-hidden"
                 aria-label="xx"

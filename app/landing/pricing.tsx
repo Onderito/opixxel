@@ -16,14 +16,7 @@ function DoubleTick() {
       aria-hidden
     >
       <path
-        d="M2 13L7.5 18.5L16.5 8"
-        stroke="var(--accent)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M8 13L13.5 18.5L22.5 8"
+        d="M4 13L9 18L20 7"
         stroke="var(--accent)"
         strokeWidth="1.5"
         strokeLinecap="round"
@@ -188,7 +181,7 @@ function PricingCard({ plan }: { plan: (typeof plans)[number] }) {
         {/* Titre + description + prix */}
         <div className="flex flex-col gap-[52px]">
           {/* Titre + description */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 md:min-h-[120px]">
             {titleBordered ? (
               <div
                 data-pc-title
@@ -201,7 +194,7 @@ function PricingCard({ plan }: { plan: (typeof plans)[number] }) {
             ) : (
               <h3
                 data-pc-title
-                className={`font-manrope font-medium text-[28px] tracking-[-0.02em] leading-none ${
+                className={`font-manrope font-medium text-[28px] tracking-normal leading-none border border-transparent py-1 ${
                   dark ? "text-white" : "text-title"
                 }`}
               >
@@ -211,7 +204,7 @@ function PricingCard({ plan }: { plan: (typeof plans)[number] }) {
 
             <p
               data-pc-desc
-              className={`font-manrope font-light text-base leading-[1.35] ${
+              className={`font-manrope font-light text-base  ${
                 dark ? "text-[#a4a4a4]" : "text-body"
               }`}
             >
@@ -283,7 +276,7 @@ export default function Pricing() {
     <div ref={sectionRef}>
       <div
         ref={headerRef}
-        className="flex flex-wrap items-center gap-x-8 gap-y-2"
+        className="flex flex-wrap items-center gap-x-3 gap-y-1"
       >
         <span
           data-eyebrow

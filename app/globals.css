@@ -55,7 +55,7 @@
 
   .heading-3 {
     @apply text-[24px] tracking-[-0.5px]
-           md:text-[28px] xl:text-[32px] leading-snug;
+           md:text-[26px] xl:text-[28px] leading-snug;
   }
 
   .heading-4 {
