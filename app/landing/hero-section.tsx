@@ -149,7 +149,7 @@ export default function HeroSection() {
 
         <div
           id="mobile-menu"
-          className={`${menuOpen ? "mt-4 block" : "hidden"} xl:hidden`}
+          className={`${menuOpen ? "mt-4 block" : "hidden"} xl:hidden relative z-50`}
         >
           <nav
             className="rounded-3xl border border-stroke bg-surface p-5 shadow-[0_20px_60px_rgba(17,17,16,0.06)]"
@@ -189,7 +189,7 @@ export default function HeroSection() {
               <OWithEyes />
               pi
               <span
-                className="relative inline-flex translate-y-[0.06em] italic leading-none text-accent overflow-hidden"
+                className="relative inline-flex translate-y-[0.10em] sm:translate-y-[0.06em] italic leading-none text-accent overflow-hidden"
                 aria-label="xx"
                 role="text"
               >
@@ -225,7 +225,7 @@ export default function HeroSection() {
             className="w-full font-light max-w-none text-[1.05rem] leading-[1.35] sm:max-w-[18ch] md:max-w-[24ch] md:text-[1.15rem] xl:max-w-[34ch]"
           >
             Design Engineer, de la maquette au code animé. Je construis
-            l&apos;interface <br className="hidden xl:block" /> entiere.
+            l&apos;interface <br className="hidden xl:block" /> entière.
           </p>
           <p
             ref={rightCopyRef}
