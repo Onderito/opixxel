@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useFooterScroll } from "@/animation-gsap/use-footer-scroll";
 import { OWithEyes } from "@/components/o-with-eyes";
 
@@ -69,10 +70,10 @@ const social: { label: string; href: string }[] = [
   { label: "X", href: "https://x.com/UnderDev0" },
 ];
 
-const meta = [
-  "© 2026 Opixxel",
-  "Politique de confidentialité",
-  "Mentions légales",
+const meta: { label: string; href?: string }[] = [
+  { label: "© 2026 Öpixxel" },
+  { label: "Politique de confidentialité", href: "/politique-de-confidentialite" },
+  { label: "Mentions légales", href: "/mentions-legales" },
 ];
 
 function scrollTo(href: string) {
@@ -174,9 +175,20 @@ export default function Footer() {
             <div className="mt-[10px]">
               <Underline />
             </div>
-            <ul className="flex flex-col gap-[6px] mt-[20px] font-manrope font-light text-[14px] text-label leading-normal cursor-pointer">
-              {meta.map((item) => (
-                <li key={item}>{item}</li>
+            <ul className="flex flex-col gap-[6px] mt-[20px] font-manrope font-light text-[14px] text-label leading-normal">
+              {meta.map(({ label, href }) => (
+                <li key={label}>
+                  {href ? (
+                    <Link
+                      href={href}
+                      className="hover:text-title transition-colors duration-200"
+                    >
+                      {label}
+                    </Link>
+                  ) : (
+                    label
+                  )}
+                </li>
               ))}
             </ul>
           </div>
