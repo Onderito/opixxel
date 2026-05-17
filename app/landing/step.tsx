@@ -4,6 +4,7 @@ import { ClipboardIllustration } from "@/components/illustrations/clipboard";
 import { WireframeIllustration } from "@/components/illustrations/wireframe";
 import { RocketIllustration } from "@/components/illustrations/rocket";
 import { useStepScroll } from "@/animation-gsap/use-step-scroll";
+import { useTextReveal } from "@/animation-gsap/use-text-reveal";
 
 // ── Sous-composants ────────────────────────────────────────────────────────────
 
@@ -164,14 +165,15 @@ const steps = [
 
 export default function Step() {
   const { sectionRef } = useStepScroll();
+  const { ref: headerRef } = useTextReveal();
 
   return (
     <div ref={sectionRef}>
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <span className="text-accent text-xs md:text-sm tracking-wide font-medium">
+      <div ref={headerRef} className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <span data-eyebrow className="text-accent text-xs md:text-sm tracking-wide font-medium">
           // de ton idée à ton site
         </span>
-        <h2 className="font-bricolage heading-2 text-title">
+        <h2 data-heading className="font-bricolage heading-2 text-title">
           Rien de compliqué.
         </h2>
       </div>

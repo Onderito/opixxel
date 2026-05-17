@@ -10,25 +10,25 @@ gsap.registerPlugin(ScrollTrigger);
 const projects = [
   {
     title: "Viplimonice",
-    description: "Un site premium pour une clientèle premium",
+    description: "Un site premium pour une clientèle premium.",
     date: "2026",
     url: "https://viplimonice.com",
   },
   {
     title: "Ondermotion",
-    description: "Le portfolio qui m'a repositionné",
+    description: "Le portfolio qui m'a repositionné.",
     date: "2025",
     url: "https://ondermotion.dev",
   },
   {
     title: "Clarity",
-    description: "Focus sur l'essentiel, zéro distraction",
+    description: "Focus sur l'essentiel, zéro distraction.",
     date: "2025",
     url: "https://clarity-d63997.webflow.io/",
   },
   {
     title: "Calmly",
-    description: "Le minimalisme au service du bien-être",
+    description: "Le minimalisme au service du bien-être.",
     date: "2025",
     url: "https://calmly-app-zeta.vercel.app/",
   },
@@ -200,8 +200,11 @@ export default function Projects() {
       {/* Liste */}
       <div
         ref={(el) => {
-          (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
-          (listRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+          (
+            containerRef as React.MutableRefObject<HTMLDivElement | null>
+          ).current = el;
+          (listRef as React.MutableRefObject<HTMLDivElement | null>).current =
+            el;
         }}
         className="relative flex flex-col divide-y divide-[#E3E1DC] border-y border-[#E3E1DC] md:cursor-none"
         onMouseMove={handleMouseMove}
@@ -218,7 +221,8 @@ export default function Projects() {
             <div
               className="flex items-center justify-between gap-4 py-6 font-dm-sans transition-opacity duration-300"
               style={{
-                opacity: activeIndex !== null && activeIndex !== index ? 0.3 : 1,
+                opacity:
+                  activeIndex !== null && activeIndex !== index ? 0.3 : 1,
               }}
               onMouseEnter={(e) => handleEnter(index, e)}
             >
