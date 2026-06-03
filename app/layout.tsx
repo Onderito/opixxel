@@ -36,7 +36,7 @@ export default function RootLayout({
       lang="en"
       className={`${bricolageGrotesque.variable} ${manrope.variable} ${caveat.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col overflow-x-clip">
         <ClientWrapper>{children}</ClientWrapper>
       </body>
     </html>
