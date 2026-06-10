@@ -19,6 +19,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const DURATION = 1.4; // durée d'ouverture d'un élément (unités timeline)
 const STEP = 1.15; // décalage entre deux éléments (overlap = DURATION - STEP)
+const OPEN_EASE = "power1.inOut"; // démarrage ET fin en douceur → ouverture calme
 
 export function usePresentationScroll() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -49,20 +50,32 @@ export function usePresentationScroll() {
             left: "50%",
             top: 0,
             xPercent: -50,
-            scale: 1.12,
+            scale: 1.05,
+            opacity: 0.6,
+            willChange: "transform, opacity",
             transformOrigin: "center center",
           });
 
           // 3. Animation, positionnée en cascade (tour à tour).
-          //    ease "none" = la progression suit EXACTEMENT le scroll
-          //    (1:1), pas d'accélération parasite → ressenti naturel.
+          //    Easing "power1.inOut" : l'ouverture démarre lentement, monte
+          //    à peine en vitesse puis se pose en douceur → pas d'effet
+          //    « boum », tout en restant piloté par le scroll (scrub).
           const at = i * STEP;
           tl.to(
             clip,
-            { width: naturalW, duration: DURATION, ease: "none" },
+            { width: naturalW, duration: DURATION, ease: OPEN_EASE },
             at,
           );
-          tl.to(inner, { scale: 1, duration: DURATION, ease: "none" }, at);
+          tl.to(
+            inner,
+            {
+              scale: 1,
+              opacity: 1,
+              duration: DURATION,
+              ease: OPEN_EASE,
+            },
+            at,
+          );
         });
       }, sectionRef);
 
@@ -71,24 +84,19 @@ export function usePresentationScroll() {
 
     const mm = gsap.matchMedia();
 
-    // Desktop — plage de scroll large = animation lente et posée.
+    // Animation uniquement sur desktop (≥768px). Sur mobile, les images
+    // restent dans le flux normal (visibles, pas de width:0) → aucun
+    // risque qu'elles restent fermées ou débordent horizontalement.
     mm.add("(min-width: 768px)", () =>
       build({
         trigger: section,
-        start: "top 75%",
-        end: "90% 60%",
-        markers: true,
-        scrub: true,
-      }),
-    );
-
-    // Mobile.
-    mm.add("(max-width: 767px)", () =>
-      build({
-        trigger: section,
-        start: "top 90%",
-        end: "bottom 50%",
-        scrub: true,
+        // La séquence commence un peu plus tôt et se déroule sur une plus
+        // grande portion de scroll → chaque élément a le temps de respirer.
+        start: "top 80%",
+        end: "bottom 65%",
+        // scrub numérique : la timeline « rattrape » le scroll avec ~1.2s de
+        // lissage → mouvement calme et régulier, sans à-coups.
+        scrub: 1.2,
       }),
     );
 

@@ -6,12 +6,15 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   // Override default ignores of eslint-config-next.
+  // Patterns NON ancrés (**/…) : ces dossiers générés sont ignorés quel que
+  // soit le base path d'ESLint. Avec `.next/**` ancré à la racine, certains
+  // setups (ex. git worktree) ne matchent pas et ESLint linte tout le build
+  // généré → des milliers de faux problèmes.
   globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
+    "**/.next/**",
+    "**/out/**",
+    "**/build/**",
+    "**/next-env.d.ts",
   ]),
 ]);
 

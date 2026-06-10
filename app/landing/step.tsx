@@ -63,7 +63,7 @@ function StepCard({
   return (
     <div
       data-step-card
-      className="relative flex flex-col items-center justify-center gap-4 bg-canvas border border-stroke rounded-sm px-8 py-12 text-center w-full min-h-[360px] xl:w-[413px] xl:h-[539px] xl:min-h-0"
+      className="relative flex flex-col items-center justify-center gap-4 bg-canvas/55 backdrop-blur-[1.5px] border border-stroke rounded-sm px-8 py-12 text-center w-full min-h-[360px] xl:w-[413px] xl:h-[539px] xl:min-h-0"
     >
       <CornerMarks />
       <PlusAccent />
@@ -168,7 +168,19 @@ export default function Step() {
   const { ref: headerRef } = useTextReveal();
 
   return (
-    <div ref={sectionRef}>
+    <div ref={sectionRef} className="relative isolate">
+      {/* Fond quadrillé « plan technique » — lignes dans les gris chauds de
+          la DA (label mélangé à transparent), estompé sur les bords par un
+          masque radial. `isolate` sur le parent crée un stacking context :
+          sans lui, le -z-10 passerait derrière le bg-surface de la section. */}
+      <div
+        aria-hidden
+        className="absolute -inset-x-4 -inset-y-10 -z-10 pointer-events-none
+          bg-[linear-gradient(to_right,color-mix(in_srgb,var(--text-label)_28%,transparent)_1px,transparent_1px),linear-gradient(to_bottom,color-mix(in_srgb,var(--text-label)_28%,transparent)_1px,transparent_1px)]
+          bg-[size:56px_56px]
+          [mask-image:radial-gradient(ellipse_75%_65%_at_50%_45%,black_25%,transparent_78%)]"
+      />
+
       <div ref={headerRef} className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <span data-eyebrow className="text-accent text-xs md:text-sm tracking-wide font-medium">
           // de ton idée à ton site

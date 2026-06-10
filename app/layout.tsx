@@ -34,7 +34,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${bricolageGrotesque.variable} ${manrope.variable} ${caveat.variable} h-full antialiased`}
+      className={`${bricolageGrotesque.variable} ${manrope.variable} ${caveat.variable} h-full antialiased overflow-x-clip`}
     >
       <body className="min-h-full flex flex-col overflow-x-clip">
         <ClientWrapper>{children}</ClientWrapper>

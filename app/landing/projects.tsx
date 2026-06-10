@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTextReveal } from "@/animation-gsap/use-text-reveal";
@@ -13,24 +14,28 @@ const projects = [
     description: "Un site premium pour une clientèle premium.",
     date: "2026",
     url: "https://viplimonice.com",
+    image: "/images/viplimonice.webp",
   },
   {
     title: "Ondermotion",
     description: "Le portfolio qui m'a repositionné.",
     date: "2025",
     url: "https://ondermotion.dev",
+    image: "/images/ondermotion.webp",
   },
   {
     title: "Clarity",
     description: "Focus sur l'essentiel, zéro distraction.",
     date: "2025",
     url: "https://clarity-d63997.webflow.io/",
+    image: "/images/clarity.webp",
   },
   {
     title: "Calmly",
     description: "Le minimalisme au service du bien-être.",
     date: "2025",
     url: "https://calmly-app-zeta.vercel.app/",
+    image: "/images/calmly.webp",
   },
 ];
 
@@ -49,6 +54,8 @@ export default function Projects() {
   const cursorYTo = useRef<gsap.QuickToFunc | null>(null);
 
   const listRef = useRef<HTMLDivElement>(null);
+  // Colonne d'images de la preview flottante (défilement vertical)
+  const reelRef = useRef<HTMLDivElement>(null);
 
   // ── Animation rows au scroll ──────────────────────────────────
   useLayoutEffect(() => {
@@ -111,8 +118,9 @@ export default function Projects() {
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
 
-    const lx = clientX - rect.left + 24;
-    const ly = clientY - rect.top + 16;
+    // Carte décalée à droite du curseur, centrée verticalement sur lui
+    const lx = clientX - rect.left + 28;
+    const ly = clientY - rect.top - 112;
     const cx = clientX - rect.left;
     const cy = clientY - rect.top;
 
@@ -143,12 +151,22 @@ export default function Projects() {
     setLabelText(projects[index].title);
     setActiveIndex(index);
 
+    // Fait défiler la colonne d'images vers la capture du projet survolé
+    // (la colonne contient N images → un cran = 100/N % de sa hauteur).
+    gsap.to(reelRef.current, {
+      yPercent: -index * (100 / projects.length),
+      duration: 0.55,
+      ease: "power3.out",
+      overwrite: "auto",
+    });
+
     if (!isVisible.current) {
       moveTo(pos.x, pos.y, true);
       isVisible.current = true;
       gsap.to(labelRef.current, {
         opacity: 1,
         scale: 1,
+        rotation: -3,
         duration: 0.35,
         ease: "power3.out",
         overwrite: "auto",
@@ -168,6 +186,7 @@ export default function Projects() {
     gsap.to(labelRef.current, {
       opacity: 0,
       scale: 0.88,
+      rotation: -8,
       duration: 0.2,
       ease: "power2.in",
       overwrite: "auto",
@@ -192,7 +211,7 @@ export default function Projects() {
         >
           {"// ce que je construis"}
         </span>
-        <h2 data-heading className="font-fraunces heading-2 text-title">
+        <h2 data-heading className="font-bricolage heading-2 text-title">
           Plutôt que de l&apos;expliquer.
         </h2>
       </div>
@@ -206,7 +225,7 @@ export default function Projects() {
           (listRef as React.MutableRefObject<HTMLDivElement | null>).current =
             el;
         }}
-        className="relative flex flex-col divide-y divide-[#E3E1DC] border-y border-[#E3E1DC] md:cursor-none"
+        className="relative flex flex-col divide-y divide-stroke border-y border-stroke md:cursor-none"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleLeave}
       >
@@ -219,7 +238,7 @@ export default function Projects() {
             rel="noreferrer"
           >
             <div
-              className="flex items-center justify-between gap-4 py-6 font-dm-sans transition-opacity duration-300"
+              className="flex items-center justify-between gap-4 py-6 font-manrope transition-opacity duration-300"
               style={{
                 opacity:
                   activeIndex !== null && activeIndex !== index ? 0.3 : 1,
@@ -267,15 +286,40 @@ export default function Projects() {
           </svg>
         </div>
 
-        {/* Label flottant */}
+        {/* Preview flottante : capture du site + bandeau titre.
+            Les captures sont empilées dans une colonne qui défile
+            verticalement (effet reel) au changement de projet. */}
         <div
           ref={labelRef}
-          className="pointer-events-none absolute top-0 left-0 bg-accent px-2 py-2 rounded-[10px]"
+          className="pointer-events-none absolute top-0 left-0 z-40 hidden md:block w-[270px] overflow-hidden rounded-[2px] border border-stroke bg-canvas shadow-[0_24px_60px_rgba(17,17,16,0.12)]"
           style={{ willChange: "transform", opacity: 0 }}
         >
-          <span className="font-bold text-white text-4xl whitespace-nowrap">
-            {labelText}
-          </span>
+          <div className="relative h-[175px] overflow-hidden">
+            <div ref={reelRef} className="flex flex-col will-change-transform">
+              {projects.map((p) => (
+                <div
+                  key={p.title}
+                  className="relative h-[175px] w-full shrink-0"
+                >
+                  <Image
+                    src={p.image}
+                    alt=""
+                    fill
+                    sizes="270px"
+                    className="object-cover object-top"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="flex items-center justify-between bg-accent px-3 py-2">
+            <span className="font-bricolage font-bold italic text-white text-lg whitespace-nowrap">
+              {labelText}
+            </span>
+            <span className="text-white text-lg" aria-hidden>
+              →
+            </span>
+          </div>
         </div>
       </div>
     </div>
