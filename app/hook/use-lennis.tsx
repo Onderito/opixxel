@@ -15,11 +15,11 @@ const useLenis = () => {
       duration: 1.5,           // était 1.2 — plus de glisse, plus aérien
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -9 * t)), // légèrement adouci (-10 → -9)
       smoothWheel: true,
-      wheelMultiplier: 0.9,    // était 1 — un poil moins rapide, plus contrôlé
-      touchMultiplier: 2,
+      wheelMultiplier: 0.9, // était 1 — un poil moins rapide, plus contrôlé
       infinite: false,
-      syncTouch: true,
-      syncTouchLerp: 0.075,
+      // Tactile : on laisse le scroll natif du téléphone (fluide, pas de
+      // jank). syncTouch:false = Lenis ne smoothe pas le toucher.
+      syncTouch: false,
     });
 
     // ── Sync critique Lenis ↔ GSAP ScrollTrigger ──────────────
