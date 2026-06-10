@@ -8,84 +8,73 @@ const SEQUENCE = [
   // ── Phrase 1 — introduction ────────────────────────────────────
   { phrase: "1", kind: "text", content: "Moi" },
   { phrase: "1", kind: "text", content: "c'est" },
+  { phrase: "1", kind: "image", src: "/images/profil.webp", alt: "Ulas" },
+  { phrase: "1", kind: "text", content: "Ulas," },
 
-  {
-    phrase: "1",
-    kind: "image",
-    src: "/images/profil.webp",
-    alt: "Ulas",
-  },
+  { phrase: "1", kind: "text", content: "je" },
+  { phrase: "1", kind: "text", content: "pense" },
 
-  { phrase: "1", kind: "text", content: "Ulas", ease: "back.out(1.4)" },
-  { phrase: "1", kind: "text", content: "je", dir: "left", delay: 0.5 },
-  { phrase: "1", kind: "text", content: "pense", dir: "left", delay: 0.5 },
-  { phrase: "1", kind: "text", content: "le", dir: "left", delay: 0.2 },
-
-  // ── Phrase 2 — proposition de valeur ──────────────────────────
+  // ── Phrase 2 — Design entre "pense" et "code" ─────────────────
   { phrase: "2", kind: "design", content: "Design" },
-  { phrase: "2", kind: "text", content: "code", dir: "left" },
-  { phrase: "2", kind: "deco" },
-  { phrase: "2", kind: "text", content: "les", dir: "left" },
-  { phrase: "2", kind: "text", content: "animations", dir: "left" },
+  { phrase: "2", kind: "text", content: "code" },
 
-  // ── Phrase 3 — conclusion ──────────────────────────────────────
-  { phrase: "3", kind: "text", content: "et" },
+  // Rangée 2 : ⚡  "les"  "animations"  "et"
+  { phrase: "2", kind: "deco" },
+  { phrase: "2", kind: "text", content: "les" },
+  { phrase: "2", kind: "text", content: "animations" },
+  { phrase: "2", kind: "text", content: "et" },
+
+  // Rangée 3 : "livre"  "le"  [NOMADO]  "produit"
   { phrase: "3", kind: "text", content: "livre" },
   { phrase: "3", kind: "text", content: "le" },
-  { phrase: "3", kind: "text", content: "produit", dir: "left", delay: 0.5 },
+  { phrase: "3", kind: "image", src: "/images/nomado.webp", alt: "Produit" },
+  { phrase: "3", kind: "text", content: "produit" },
 
-  {
-    phrase: "3",
-    kind: "image",
-    src: "/images/nomado.webp",
-    alt: "Produit",
-  },
+  // Rangée 4 : "Final."  "4"  [services]  "expertises."
   {
     phrase: "3",
     kind: "text",
     content: "Final.",
-    dir: "left",
-    delay: 0.5,
     className: "font-bricolage italic font-black",
-    ease: "back.out(2.5)",
+  },
+  { phrase: "4", kind: "text", content: "4" },
+  { phrase: "4", kind: "image", src: "/images/services.webp", alt: "Services" },
+  { phrase: "4", kind: "text", content: "expertises." },
+
+  // Rangée 5 : "Un"  "seul"  "contact."
+  { phrase: "4", kind: "text", content: "Un" },
+  { phrase: "4", kind: "text", content: "seul" },
+  {
+    phrase: "4",
+    kind: "text",
+    content: "contact.",
+    className: "text-accent",
   },
 ] as const;
 
+type Entry = (typeof SEQUENCE)[number];
+
 // ─────────────────────────────────────────────────────────────────────────────
-// Composants internes
+// Conteneur clip — animé par usePresentationScroll via data-clip / data-clip-inner
 // ─────────────────────────────────────────────────────────────────────────────
 
-function RevealWrapper({
-  phrase,
-  dir = "up",
-  delay,
-  ease,
-  kind,
-  slideClassName = "",
-  outerClassName = "",
+function Clip({
+  className = "",
+  innerClassName = "",
   children,
 }: {
-  phrase: string;
-  dir?: "up" | "left";
-  delay?: number;
-  ease?: string;
-  kind: string;
-  slideClassName?: string;
-  outerClassName?: string;
+  className?: string;
+  innerClassName?: string;
   children: React.ReactNode;
 }) {
-  const isClipped = kind !== "text";
   return (
     <span
-      data-phrase={phrase}
-      data-dir={dir}
-      data-delay={delay || undefined}
-      data-ease={ease || undefined}
-      className={`inline-flex align-middle${isClipped ? " overflow-hidden [clip-path:inset(0)]" : ""}${outerClassName ? ` ${outerClassName}` : ""}`}
+      data-clip
+      className={`relative inline-flex align-middle overflow-hidden rounded-md md:rounded-lg ${className}`}
     >
       <span
-        data-slide
-        className={`inline-flex will-change-transform  ${slideClassName}`}
+        data-clip-inner
+        className={`inline-flex will-change-transform ${innerClassName}`}
       >
         {children}
       </span>
@@ -93,41 +82,31 @@ function RevealWrapper({
   );
 }
 
-function Photo({
-  src,
-  alt,
-  rotate,
-}: {
-  src: string;
-  alt: string;
-  rotate?: string;
-}) {
+// ── Image ─────────────────────────────────────────────────────────────────────
+
+function Photo({ src, alt }: { src: string; alt: string }) {
   return (
     <span
-      className={`relative inline-block shrink-0
+      className="relative inline-block shrink-0
       w-[4.2rem] h-[1.4rem]
       sm:w-[5.4rem] sm:h-[1.85rem]
       md:w-[7.8rem] md:h-[2.7rem]
       lg:w-[10.8rem] lg:h-[3.7rem]
-      xl:w-[13.8rem] xl:h-[7.2rem] ${rotate ? ` ${rotate}` : ""}`}
+      xl:w-[13.8rem] xl:h-[7.2rem]"
     >
-      <span
-        data-img-clip
-        className="absolute inset-0 rounded-md overflow-hidden"
-      >
-        <Image
-          src={src}
-          alt={alt}
-          width={320}
-          height={110}
-          className="w-full h-full object-cover"
-        />
-      </span>
+      <Image
+        src={src}
+        alt={alt}
+        width={320}
+        height={110}
+        className="absolute inset-0 w-full h-full object-cover rounded-md"
+      />
     </span>
   );
 }
 
-// Small lightning-bolt / spark deco between CODE and ANIMATIONS
+// ── Petit éclair entre CODE et ANIMATIONS ─────────────────────────────────────
+
 function Deco() {
   return (
     <span className="inline-flex items-center self-center mx-[0.05em]">
@@ -147,33 +126,29 @@ function Deco() {
   );
 }
 
-type Entry = (typeof SEQUENCE)[number];
+// ─────────────────────────────────────────────────────────────────────────────
 
 function renderEntry(entry: Entry, i: number) {
   if (entry.kind === "image") {
     return (
-      <RevealWrapper key={i} phrase={entry.phrase} kind="image" outerClassName="mr-[-0.07em]">
+      <Clip key={i} className="mr-[-0.07em]">
         <Photo src={entry.src} alt={entry.alt} />
-      </RevealWrapper>
+      </Clip>
     );
   }
 
   if (entry.kind === "design") {
     return (
-      <RevealWrapper
+      <Clip
         key={i}
-        phrase={entry.phrase}
-        kind="design"
-        slideClassName="
+        innerClassName="
           bg-accent text-white font-bricolage font-black italic
           rounded-md md:rounded-lg pt-[0.05em] pb-[0.1em]
           items-center leading-none text-title
         "
       >
-        <span data-design-clip className="pr-[0.3em]">
-          {entry.content}
-        </span>
-      </RevealWrapper>
+        <span className="px-[0.3em]">{entry.content}</span>
+      </Clip>
     );
   }
 
@@ -181,20 +156,13 @@ function renderEntry(entry: Entry, i: number) {
     return <Deco key={i} />;
   }
 
-  const e = entry as Extract<Entry, { kind?: "text" }>;
+  const e = entry as Extract<Entry, { kind: "text" }>;
   return (
-    <RevealWrapper
-      key={i}
-      phrase={e.phrase}
-      dir={"dir" in e ? e.dir : "up"}
-      delay={"delay" in e ? e.delay : undefined}
-      ease={"ease" in e ? e.ease : undefined}
-      kind="text"
-    >
+    <span key={i} className="inline-flex align-middle">
       <span className={"className" in e ? e.className : undefined}>
         {e.content}
       </span>
-    </RevealWrapper>
+    </span>
   );
 }
 
@@ -239,12 +207,9 @@ export default function Presentation() {
             key={row}
             className="flex flex-wrap items-center justify-center gap-x-[0.15em]"
           >
-            {(
-              SEQUENCE.slice(
-                row * 4,
-                row * 4 + 4,
-              ) as (typeof SEQUENCE)[number][]
-            ).map((entry, i) => renderEntry(entry, row * 4 + i))}
+            {(SEQUENCE.slice(row * 4, row * 4 + 4) as Entry[]).map((entry, i) =>
+              renderEntry(entry, row * 4 + i),
+            )}
           </div>
         ))}
       </div>

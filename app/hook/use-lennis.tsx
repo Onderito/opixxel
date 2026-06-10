@@ -11,12 +11,6 @@ const useLenis = () => {
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
-    const prefersNativeScroll =
-      window.matchMedia("(max-width: 767px)").matches ||
-      window.matchMedia("(pointer: coarse)").matches;
-
-    if (prefersNativeScroll) return;
-
     lenisRef.current = new Lenis({
       duration: 1.5,           // était 1.2 — plus de glisse, plus aérien
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -9 * t)), // légèrement adouci (-10 → -9)
