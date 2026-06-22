@@ -10,10 +10,10 @@ gsap.registerPlugin(ScrollTrigger);
 
 const projects = [
   {
-    title: "Viplimonice",
+    title: "Kokolimo",
     description: "Un site premium pour une clientèle premium.",
     date: "2026",
-    url: "https://viplimonice.com",
+    url: "https://kokolimo.com",
     image: "/images/viplimonice.webp",
   },
   {
@@ -23,20 +23,20 @@ const projects = [
     url: "https://ondermotion.dev",
     image: "/images/ondermotion.webp",
   },
-  {
-    title: "Clarity",
-    description: "Focus sur l'essentiel, zéro distraction.",
-    date: "2025",
-    url: "https://clarity-d63997.webflow.io/",
-    image: "/images/clarity.webp",
-  },
-  {
-    title: "Calmly",
-    description: "Le minimalisme au service du bien-être.",
-    date: "2025",
-    url: "https://calmly-app-zeta.vercel.app/",
-    image: "/images/calmly.webp",
-  },
+  // {
+  //   title: "Clarity",
+  //   description: "Focus sur l'essentiel, zéro distraction.",
+  //   date: "2025",
+  //   url: "https://clarity-d63997.webflow.io/",
+  //   image: "/images/clarity.webp",
+  // },
+  // {
+  //   title: "Calmly",
+  //   description: "Le minimalisme au service du bien-être.",
+  //   date: "2025",
+  //   url: "https://calmly-app-zeta.vercel.app/",
+  //   image: "/images/calmly.webp",
+  // },
 ];
 
 export default function Projects() {
