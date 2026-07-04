@@ -30,25 +30,12 @@ const SEQUENCE = [
   { phrase: "3", kind: "image", src: "/images/nomado.webp", alt: "Produit" },
   { phrase: "3", kind: "text", content: "produit" },
 
-  // Rangée 4 : "Final."  "4"  [services]  "expertises."
+  // Rangée 4 : "Final."
   {
     phrase: "3",
     kind: "text",
     content: "Final.",
     className: "font-bricolage italic font-black",
-  },
-  { phrase: "4", kind: "text", content: "4" },
-  { phrase: "4", kind: "image", src: "/images/services.webp", alt: "Services" },
-  { phrase: "4", kind: "text", content: "expertises." },
-
-  // Rangée 5 : "Un"  "seul"  "contact."
-  { phrase: "4", kind: "text", content: "Un" },
-  { phrase: "4", kind: "text", content: "seul" },
-  {
-    phrase: "4",
-    kind: "text",
-    content: "contact.",
-    className: "text-accent",
   },
 ] as const;
 
