@@ -3,8 +3,10 @@
 import Image from "next/image";
 import { usePresentationScroll } from "@/animation-gsap/use-presentation-scroll";
 import { useTextReveal } from "@/animation-gsap/use-text-reveal";
+import { useLanguage, type Language } from "@/app/ui/language-context";
 
-const SEQUENCE = [
+function getSequence(language: Language) {
+  return language === "fr" ? [
   // ── Phrase 1 — introduction ────────────────────────────────────
   { phrase: "1", kind: "text", content: "Moi" },
   { phrase: "1", kind: "text", content: "c'est" },
@@ -37,9 +39,31 @@ const SEQUENCE = [
     content: "Final.",
     className: "font-bricolage italic font-black",
   },
+] as const : [
+  { phrase: "1", kind: "text", content: "I'm" },
+  { phrase: "1", kind: "image", src: "/images/profil.webp", alt: "Ulas" },
+  { phrase: "1", kind: "text", content: "Ulas," },
+  { phrase: "1", kind: "text", content: "I" },
+  { phrase: "1", kind: "text", content: "think" },
+  { phrase: "2", kind: "design", content: "Design" },
+  { phrase: "2", kind: "text", content: "code" },
+  { phrase: "2", kind: "deco" },
+  { phrase: "2", kind: "text", content: "animations" },
+  { phrase: "2", kind: "text", content: "and" },
+  { phrase: "3", kind: "text", content: "deliver" },
+  { phrase: "3", kind: "text", content: "the" },
+  { phrase: "3", kind: "image", src: "/images/nomado.webp", alt: "Product" },
+  { phrase: "3", kind: "text", content: "final" },
+  {
+    phrase: "3",
+    kind: "text",
+    content: "product.",
+    className: "font-bricolage italic font-black",
+  },
 ] as const;
+}
 
-type Entry = (typeof SEQUENCE)[number];
+type Entry = ReturnType<typeof getSequence>[number];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Conteneur clip — animé par usePresentationScroll via data-clip / data-clip-inner
@@ -115,7 +139,7 @@ function Deco() {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-function renderEntry(entry: Entry, i: number) {
+function renderEntry(entry: Entry, i: number, language: Language) {
   if (entry.kind === "image") {
     return (
       <Clip key={i} className="mr-[-0.07em]">
@@ -134,7 +158,7 @@ function renderEntry(entry: Entry, i: number) {
           items-center leading-none text-title
         "
       >
-        <span className="px-[0.3em]">{entry.content}</span>
+        <span className="pl-[0.22em] pr-[0.38em]">{entry.content}</span>
       </Clip>
     );
   }
@@ -144,6 +168,34 @@ function renderEntry(entry: Entry, i: number) {
   }
 
   const e = entry as Extract<Entry, { kind: "text" }>;
+  const isFinalEntry =
+    (language === "fr" && e.content === "Final.") ||
+    (language === "en" && e.content === "product.");
+
+  if (isFinalEntry) {
+    return (
+      <span key={i} className="inline-flex items-center align-middle">
+        <span className={"className" in e ? e.className : undefined}>
+          {e.content}
+        </span>
+        <a
+          href="https://calendly.com/ulas-onder/30min"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group ml-[0.35em] inline-flex min-h-11 items-center gap-2 self-center whitespace-nowrap rounded-full bg-title px-4 py-3 font-manrope text-[10px] font-semibold leading-none tracking-normal text-canvas shadow-[0_8px_24px_rgba(17,17,16,0.14)] transition-[background-color,color,transform,box-shadow] duration-200 hover:bg-accent hover:shadow-[0_12px_30px_rgba(255,77,46,0.2)] active:scale-[0.96] sm:text-xs md:px-5 md:text-sm xl:text-base"
+        >
+          {language === "fr" ? "Démarrer un projet" : "Start a project"}
+          <span
+            aria-hidden="true"
+            className="text-accent transition-[color,transform] duration-200 group-hover:translate-x-1 group-hover:text-white"
+          >
+            →
+          </span>
+        </a>
+      </span>
+    );
+  }
+
   return (
     <span key={i} className="inline-flex align-middle">
       <span className={"className" in e ? e.className : undefined}>
@@ -156,7 +208,16 @@ function renderEntry(entry: Entry, i: number) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function Presentation() {
-  const { sectionRef } = usePresentationScroll();
+  const { language } = useLanguage();
+  const sequence = getSequence(language);
+  const rowSizes = language === "fr" ? [4, 4, 4, 4, 1] : [4, 4, 3, 4];
+  let sequenceOffset = 0;
+  const rows = rowSizes.map((size) => {
+    const row = sequence.slice(sequenceOffset, sequenceOffset + size) as Entry[];
+    sequenceOffset += size;
+    return row;
+  });
+  const { sectionRef } = usePresentationScroll(language);
   const { ref: headerRef } = useTextReveal();
 
   return (
@@ -172,10 +233,10 @@ export default function Presentation() {
           data-eyebrow
           className="text-accent text-xs md:text-sm tracking-wide font-medium"
         >
-          // qui se cache derrière
+          {language === "fr" ? "// qui se cache derrière" : "// behind the work"}
         </span>
         <h2 data-heading className="font-bricolage heading-2 text-title">
-          Une seule paire de mains.
+          {language === "fr" ? "Une seule paire de mains." : "One pair of hands."}
         </h2>
       </div>
 
@@ -189,13 +250,13 @@ export default function Presentation() {
         gap-y-[0.06em]
       "
       >
-        {Array.from({ length: Math.ceil(SEQUENCE.length / 4) }, (_, row) => (
+        {rows.map((row, rowIndex) => (
           <div
-            key={row}
+            key={`${language}-${rowIndex}`}
             className="flex flex-wrap items-center justify-center gap-x-[0.15em]"
           >
-            {(SEQUENCE.slice(row * 4, row * 4 + 4) as Entry[]).map((entry, i) =>
-              renderEntry(entry, row * 4 + i),
+            {row.map((entry, entryIndex) =>
+              renderEntry(entry, rowIndex * 10 + entryIndex, language),
             )}
           </div>
         ))}

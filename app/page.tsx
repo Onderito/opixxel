@@ -4,6 +4,7 @@ import Pricing from "@/app/landing/pricing";
 import Projects from "@/app/landing/projects";
 import Step from "@/app/landing/step";
 import Footer from "@/app/landing/footer";
+import { LanguageProvider } from "@/app/ui/language-context";
 
 function Section({
   children,
@@ -26,7 +27,7 @@ function Section({
 
 export default function Home() {
   return (
-    <>
+    <LanguageProvider>
       <HeroSection />
       <Section id="qui-suis-je" bg="bg-surface">
         <Presentation />
@@ -44,6 +45,6 @@ export default function Home() {
         <Pricing />
       </Section>
       <Footer />
-    </>
+    </LanguageProvider>
   );
 }

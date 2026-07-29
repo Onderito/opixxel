@@ -80,6 +80,7 @@
   html {
     color-scheme: light;
     background-color: var(--background);
+    -webkit-font-smoothing: antialiased;
   }
 
   body {

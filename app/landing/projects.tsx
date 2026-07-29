@@ -5,20 +5,27 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTextReveal } from "@/animation-gsap/use-text-reveal";
+import { useLanguage } from "@/app/ui/language-context";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const projects = [
+const projectData = [
   {
     title: "Kokolimo",
-    description: "Un site premium pour une clientèle premium.",
+    description: {
+      fr: "Un site premium pour une clientèle premium.",
+      en: "A premium website for a premium clientele.",
+    },
     date: "2026",
     url: "https://kokolimo.com",
     image: "/images/viplimonice.webp",
   },
   {
     title: "Ondermotion",
-    description: "Le portfolio qui m'a repositionné.",
+    description: {
+      fr: "Le portfolio qui m'a repositionné.",
+      en: "The portfolio that repositioned my work.",
+    },
     date: "2025",
     url: "https://ondermotion.dev",
     image: "/images/ondermotion.webp",
@@ -40,6 +47,11 @@ const projects = [
 ];
 
 export default function Projects() {
+  const { language } = useLanguage();
+  const projects = projectData.map((project) => ({
+    ...project,
+    description: project.description[language],
+  }));
   const { ref: headerRef } = useTextReveal();
   const containerRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLDivElement>(null);
@@ -209,10 +221,10 @@ export default function Projects() {
           data-eyebrow
           className="text-accent text-xs md:text-sm tracking-wide font-medium"
         >
-          {"// ce que je construis"}
+          {language === "fr" ? "// ce que je construis" : "// selected work"}
         </span>
         <h2 data-heading className="font-bricolage heading-2 text-title">
-          Plutôt que de l&apos;expliquer.
+          {language === "fr" ? "Plutôt que de l’expliquer." : "Better shown than told."}
         </h2>
       </div>
 

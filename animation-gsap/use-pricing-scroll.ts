@@ -4,20 +4,24 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// "1.500€" → 1500 | "3.500€" → 3500 | "Sur devis" → null
+// "1.500€" → 1500 | "€1,500" → 1500 | "Sur devis" → null
 function parsePrice(raw: string): number | null {
-  const n = parseFloat(
-    raw.replace(/\./g, "").replace(",", ".").replace("€", "").trim(),
-  );
-  return isNaN(n) ? null : n;
+  const digits = raw.replace(/\D/g, "");
+  if (!digits) return null;
+
+  const value = Number(digits);
+  return Number.isNaN(value) ? null : value;
 }
 
-// 1500 → "1.500€"
-function formatPrice(n: number): string {
-  return Math.round(n).toLocaleString("fr-FR").replace(/\s/g, ".") + "€";
+function formatPrice(n: number, template: string): string {
+  const value = Math.round(n);
+
+  return template.trim().startsWith("€")
+    ? `€${value.toLocaleString("en-US")}`
+    : `${value.toLocaleString("fr-FR").replace(/\s/g, ".")}€`;
 }
 
-export function usePricingScroll() {
+export function usePricingScroll(refreshKey: string) {
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -47,6 +51,7 @@ export function usePricingScroll() {
 
     // ── Desktop (≥ 768px) — animation complète avec compteur ─────────────
     mm.add("(min-width: 768px)", () => {
+      const cardTimelines: gsap.core.Timeline[] = [];
       const ctx = gsap.context(() => {
         const cards = gsap.utils.toArray<HTMLElement>("[data-pricing-card]", section);
 
@@ -79,6 +84,7 @@ export function usePricingScroll() {
               const cta       = card.querySelector("[data-pc-cta]");
 
               const tl = gsap.timeline({ delay: cardDelay });
+              cardTimelines.push(tl);
 
               tl.to(title,    { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 0.15);
               tl.to(desc,     { opacity: 1, y: 0, duration: 0.4,  ease: "power2.out" }, 0.3);
@@ -94,7 +100,9 @@ export function usePricingScroll() {
                   val: target,
                   duration: 1.2,
                   ease: "power2.out",
-                  onUpdate() { priceEl.textContent = formatPrice(obj.val); },
+                  onUpdate() {
+                    priceEl.textContent = formatPrice(obj.val, raw);
+                  },
                   onComplete() { priceEl.textContent = raw; },
                 }, 0.55);
                 tl.to(priceEl, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 0.55);
@@ -108,11 +116,14 @@ export function usePricingScroll() {
         });
       }, sectionRef);
 
-      return () => ctx.revert();
+      return () => {
+        cardTimelines.forEach((timeline) => timeline.kill());
+        ctx.revert();
+      };
     });
 
     return () => mm.revert();
-  }, []);
+  }, [refreshKey]);
 
   return { sectionRef };
 }

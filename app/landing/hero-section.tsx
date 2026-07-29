@@ -1,19 +1,38 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
+import { useState } from "react";
+import { LayoutGroup, motion } from "framer-motion";
 import { useHeroReveal } from "@/animation-gsap/use-hero-reveal";
 import { useHeroMotionRefs } from "@/animation-gsap/use-hero-motion-refs";
 import { OWithEyes } from "@/components/o-with-eyes";
+import { useLanguage } from "@/app/ui/language-context";
 
-const navigation: { label: string; href: string }[] = [
-  { label: "Accueil", href: "#" },
-  { label: "Qui suis-je", href: "#qui-suis-je" },
-  { label: "Projets", href: "#projets" },
-  { label: "Méthode", href: "#methode" },
-  { label: "Offres", href: "#offres" },
-  { label: "Contact", href: "https://calendly.com/ulas-onder/30min" },
-];
+const copy = {
+  fr: {
+    navigation: ["Accueil", "Qui suis-je", "Projets", "Méthode", "Offres"],
+    cta: "Je commence mon projet",
+    openMenu: "Ouvrir le menu",
+    closeMenu: "Fermer le menu",
+    navLabel: "Navigation principale",
+    role: "Développeur front-end créatif, de la maquette au code animé.",
+    roleEnd: "Je construis l’interface entière.",
+    availability: <>Disponible pour des projets<br />partout dans le monde</>,
+    languageLabel: "Choisir la langue",
+  },
+  en: {
+    navigation: ["Home", "About", "Projects", "Process", "Services"],
+    cta: "Start a project",
+    openMenu: "Open menu",
+    closeMenu: "Close menu",
+    navLabel: "Main navigation",
+    role: "Creative front-end developer, from design to animated code.",
+    roleEnd: "I build the whole interface.",
+    availability: <>Available for projects<br />worldwide</>,
+    languageLabel: "Choose language",
+  },
+} as const;
+
+const navigationHrefs = ["#", "#qui-suis-je", "#projets", "#methode", "#offres"];
 
 function scrollTo(href: string) {
   if (href === "#" || href.startsWith("http")) return;
@@ -61,6 +80,12 @@ const secondReel = [
 
 export default function HeroSection() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { language, setLanguage } = useLanguage();
+  const text = copy[language];
+  const navigation = text.navigation.map((label, index) => ({
+    label,
+    href: navigationHrefs[index],
+  }));
   const { navRef, ctaRef, leftCopyRef, rightCopyRef, titleRef } =
     useHeroMotionRefs();
   useHeroReveal({ navRef, ctaRef, leftCopyRef, rightCopyRef, titleRef });
@@ -89,7 +114,7 @@ export default function HeroSection() {
               className="flex h-14 w-14 items-center justify-center rounded-full border border-stroke text-title xl:hidden"
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
-              aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+              aria-label={menuOpen ? text.closeMenu : text.openMenu}
               onClick={() => setMenuOpen((open) => !open)}
             >
               <span className="flex w-[18px] flex-col gap-[5px]">
@@ -112,7 +137,7 @@ export default function HeroSection() {
             <nav
               ref={navRef}
               className="hidden items-center gap-8 pt-2 text-[16px] font-manrope text-label xl:flex"
-              aria-label="Navigation principale"
+              aria-label={text.navLabel}
             >
               {navigation.map(({ label, href }) => (
                 <a
@@ -136,15 +161,54 @@ export default function HeroSection() {
             </nav>
           </div>
 
-          <a
-            ref={ctaRef}
-            href="https://calendly.com/ulas-onder/30min"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block w-fit self-center border-b border-accent pb-2 text-right text-[0.95rem] font-medium leading-none text-title hover:text-accent transition-colors duration-200 sm:text-base xl:self-start"
-          >
-            Je commence mon projet
-          </a>
+          <div className="flex shrink-0 items-center gap-3 sm:gap-5 xl:self-start">
+            <LayoutGroup id="language-switch">
+              <div
+                className="flex h-10 items-center rounded-full bg-surface p-1 shadow-[0_1px_3px_rgba(17,17,16,0.08)]"
+                role="group"
+                aria-label={text.languageLabel}
+              >
+                {(["fr", "en"] as const).map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setLanguage(option)}
+                    aria-pressed={language === option}
+                    className={`relative flex h-8 min-w-9 items-center justify-center rounded-full px-2 text-[11px] font-semibold uppercase tracking-[0.08em] transition-[color,transform] duration-200 active:scale-[0.96] ${
+                      language === option
+                        ? "text-canvas"
+                        : "text-label hover:text-title"
+                    }`}
+                  >
+                    {language === option && (
+                      <motion.span
+                        layoutId="active-language"
+                        className="absolute inset-0 rounded-full bg-title shadow-[0_1px_3px_rgba(17,17,16,0.18)]"
+                        transition={{
+                          type: "spring",
+                          duration: 0.35,
+                          bounce: 0,
+                        }}
+                      />
+                    )}
+                    <span className="relative z-10">{option}</span>
+                  </button>
+                ))}
+              </div>
+            </LayoutGroup>
+            <a
+              ref={ctaRef}
+              href="https://calendly.com/ulas-onder/30min"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={text.cta}
+              className="flex h-8 w-[156px] shrink-0 items-start justify-end text-right text-[0.75rem] font-medium leading-none text-title transition-colors duration-200 hover:text-accent sm:w-[190px] sm:text-base"
+            >
+              <span className="w-fit whitespace-nowrap border-b border-accent pb-2">
+                {text.cta}
+              </span>
+            </a>
+          </div>
         </header>
 
         <div
@@ -224,16 +288,13 @@ export default function HeroSection() {
             ref={leftCopyRef}
             className="w-full font-light max-w-none text-[1.05rem] leading-[1.35] sm:max-w-[18ch] md:max-w-[24ch] md:text-[1.15rem] xl:max-w-[34ch]"
           >
-            Design Engineer, de la maquette au code animé. Je construis
-            l&apos;interface <br className="hidden xl:block" /> entière.
+            {text.role} {text.roleEnd}
           </p>
           <p
             ref={rightCopyRef}
             className="w-full font-light text-right text-[1.05rem] leading-[1.35] md:text-[1.15rem] xl:w-auto whitespace-nowrap"
           >
-            Basé nulle part,
-            <br />
-            disponible partout
+            {text.availability}
           </p>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { WireframeIllustration } from "@/components/illustrations/wireframe";
 import { RocketIllustration } from "@/components/illustrations/rocket";
 import { useStepScroll } from "@/animation-gsap/use-step-scroll";
 import { useTextReveal } from "@/animation-gsap/use-text-reveal";
+import { useLanguage } from "@/app/ui/language-context";
 
 // ── Sous-composants ────────────────────────────────────────────────────────────
 
@@ -129,7 +130,8 @@ function Arrow({ direction }: { direction: "right" | "left" }) {
 
 // ── Data ───────────────────────────────────────────────────────────────────────
 
-const steps = [
+const stepsByLanguage = {
+  fr: [
   {
     number: "01",
     title: "On cadre",
@@ -159,11 +161,37 @@ const steps = [
     ),
     chip: "livraison",
   },
-];
+  ],
+  en: [
+    {
+      number: "01",
+      title: "We define it",
+      description:
+        "A 30-minute call. You tell me about your project, constraints, and how the experience should feel.",
+      chip: "30 min",
+    },
+    {
+      number: "02",
+      title: "I design and build",
+      description:
+        "Figma first. You approve it. Then I code, animate, and refine every detail.",
+      chip: "1 to 3 weeks",
+    },
+    {
+      number: "03",
+      title: "You launch",
+      description:
+        "I deliver a clean, high-performance website, ready to go live. You leave with the keys.",
+      chip: "delivery",
+    },
+  ],
+};
 
 // ── Section ────────────────────────────────────────────────────────────────────
 
 export default function Step() {
+  const { language } = useLanguage();
+  const steps = stepsByLanguage[language];
   const { sectionRef } = useStepScroll();
   const { ref: headerRef } = useTextReveal();
 
@@ -183,10 +211,10 @@ export default function Step() {
 
       <div ref={headerRef} className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <span data-eyebrow className="text-accent text-xs md:text-sm tracking-wide font-medium">
-          // de ton idée à ton site
+          {language === "fr" ? "// de ton idée à ton site" : "// from idea to website"}
         </span>
         <h2 data-heading className="font-bricolage heading-2 text-title">
-          Rien de compliqué.
+          {language === "fr" ? "Rien de compliqué." : "Nothing complicated."}
         </h2>
       </div>
 
@@ -205,7 +233,7 @@ export default function Step() {
           rel="noopener noreferrer"
           className="relative font-bricolage italic text-title text-4xl md:text-5xl hover:text-accent transition-colors duration-300 flex flex-col items-center gap-3"
         >
-          → On démarre ?
+          {language === "fr" ? "→ On démarre ?" : "→ Shall we start?"}
           <span
             className="block w-full h-[2px] bg-accent origin-left scale-x-0"
             data-cta-underline
@@ -248,7 +276,7 @@ export default function Step() {
             rel="noopener noreferrer"
             className="relative font-bricolage italic text-title text-4xl md:text-5xl hover:text-accent transition-colors duration-300 flex flex-col items-center gap-3"
           >
-            → On démarre ?
+            {language === "fr" ? "→ On démarre ?" : "→ Shall we start?"}
             <span
               className="block w-full h-[2px] bg-accent origin-left scale-x-0"
               data-cta-underline

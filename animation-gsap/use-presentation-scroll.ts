@@ -21,7 +21,7 @@ const DURATION = 1.4; // durée d'ouverture d'un élément (unités timeline)
 const STEP = 1.15; // décalage entre deux éléments (overlap = DURATION - STEP)
 const OPEN_EASE = "power1.inOut"; // démarrage ET fin en douceur → ouverture calme
 
-export function usePresentationScroll() {
+export function usePresentationScroll(refreshKey: string) {
   const sectionRef = useRef<HTMLElement>(null);
 
   useLayoutEffect(() => {
@@ -101,7 +101,7 @@ export function usePresentationScroll() {
     );
 
     return () => mm.revert();
-  }, []);
+  }, [refreshKey]);
 
   return { sectionRef };
 }

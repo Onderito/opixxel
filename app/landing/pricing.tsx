@@ -2,6 +2,7 @@
 
 import { useTextReveal } from "@/animation-gsap/use-text-reveal";
 import { usePricingScroll } from "@/animation-gsap/use-pricing-scroll";
+import { useLanguage } from "@/app/ui/language-context";
 
 // ── Double tick icon ───────────────────────────────────────────────────────────
 
@@ -98,7 +99,8 @@ function CornerBlob() {
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
-const plans = [
+const plansByLanguage = {
+  fr: [
   {
     id: "landing",
     title: "Landing page",
@@ -152,11 +154,69 @@ const plans = [
     dark: false,
     titleBordered: false,
   },
-] as const;
+  ],
+  en: [
+    {
+      id: "landing",
+      title: "Landing page",
+      description:
+        "A page that captures attention, persuades, and converts. I handle everything, from the first pixel to the last keyframe.",
+      price: "€1,500",
+      features: [
+        "Bespoke design",
+        "Purposeful GSAP animations",
+        "Responsive and mobile-optimized",
+        "Delivery in 2 weeks",
+        "2 revision rounds included",
+      ],
+      cta: "Book a call →",
+      ctaWidth: 108,
+      dark: false,
+      titleBordered: false,
+    },
+    {
+      id: "complet",
+      title: "Complete website",
+      description:
+        "Your complete digital identity. A website that tells a story with every scroll and makes people want to stay.",
+      price: "€3,500",
+      features: [
+        "Up to 6 pages",
+        "Figma designs included",
+        "Scroll storytelling",
+        "Smooth page transitions",
+        "Delivery in 2–3 weeks",
+      ],
+      cta: "Book a call →",
+      ctaWidth: 108,
+      dark: true,
+      titleBordered: true,
+    },
+    {
+      id: "mesure",
+      title: "Custom project",
+      description:
+        "Have a complex project, an existing stack, or an agency behind you? We define exactly what you need together.",
+      price: "On request",
+      features: [
+        "Standalone GSAP components",
+        "Existing stack integration",
+        "Agency subcontracting",
+        "Day rate available on request",
+      ],
+      cta: "Let's talk →",
+      ctaWidth: 88,
+      dark: false,
+      titleBordered: false,
+    },
+  ],
+} as const;
 
 // ── Card ──────────────────────────────────────────────────────────────────────
 
-function PricingCard({ plan }: { plan: (typeof plans)[number] }) {
+type Plan = (typeof plansByLanguage)[keyof typeof plansByLanguage][number];
+
+function PricingCard({ plan }: { plan: Plan }) {
   const {
     title,
     description,
@@ -269,8 +329,10 @@ function PricingCard({ plan }: { plan: (typeof plans)[number] }) {
 // ── Section ───────────────────────────────────────────────────────────────────
 
 export default function Pricing() {
+  const { language } = useLanguage();
+  const plans = plansByLanguage[language];
   const { ref: headerRef } = useTextReveal();
-  const { sectionRef } = usePricingScroll();
+  const { sectionRef } = usePricingScroll(language);
 
   return (
     <div ref={sectionRef}>
@@ -282,13 +344,13 @@ export default function Pricing() {
           data-eyebrow
           className="font-manrope font-light text-accent text-base"
         >
-          // parlons budget
+          {language === "fr" ? "// parlons budget" : "// let's talk budget"}
         </span>
         <h2
           data-heading
           className="font-bricolage font-normal text-white heading-2"
         >
-          Les cartes sur table.
+          {language === "fr" ? "Les cartes sur table." : "Everything on the table."}
         </h2>
       </div>
 

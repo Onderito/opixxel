@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useFooterScroll } from "@/animation-gsap/use-footer-scroll";
 import { OWithEyes } from "@/components/o-with-eyes";
+import { useLanguage } from "@/app/ui/language-context";
 
 // ── Décoration "+" coin haut-gauche ──────────────────────────────────────────
 
@@ -57,26 +58,10 @@ function Underline({ width = 220 }: { width?: number }) {
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
-const explorer: { label: string; href: string }[] = [
-  { label: "Réalisations", href: "#projets" },
-  { label: "La méthode", href: "#methode" },
-  { label: "Tarifs", href: "#offres" },
-  { label: "Contact", href: "https://calendly.com/ulas-onder/30min" },
-];
-
 const social: { label: string; href: string }[] = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/ulasonder/" },
   { label: "Pinterest", href: "https://fr.pinterest.com/ulasonder07/" },
   { label: "X", href: "https://x.com/UnderDev0" },
-];
-
-const meta: { label: string; href?: string }[] = [
-  { label: "© 2026 Öpixxel" },
-  {
-    label: "Politique de confidentialité",
-    href: "/politique-de-confidentialite",
-  },
-  { label: "Mentions légales", href: "/mentions-legales" },
 ];
 
 function scrollTo(href: string) {
@@ -87,6 +72,31 @@ function scrollTo(href: string) {
 // ── Footer ────────────────────────────────────────────────────────────────────
 
 export default function Footer() {
+  const { language } = useLanguage();
+  const explorer = language === "fr"
+    ? [
+        { label: "Réalisations", href: "#projets" },
+        { label: "La méthode", href: "#methode" },
+        { label: "Tarifs", href: "#offres" },
+        { label: "Contact", href: "https://calendly.com/ulas-onder/30min" },
+      ]
+    : [
+        { label: "Work", href: "#projets" },
+        { label: "Process", href: "#methode" },
+        { label: "Services", href: "#offres" },
+        { label: "Contact", href: "https://calendly.com/ulas-onder/30min" },
+      ];
+  const meta = language === "fr"
+    ? [
+        { label: "© 2026 Öpixxel" },
+        { label: "Politique de confidentialité", href: "/politique-de-confidentialite" },
+        { label: "Mentions légales", href: "/mentions-legales" },
+      ]
+    : [
+        { label: "© 2026 Öpixxel" },
+        { label: "Privacy policy", href: "/politique-de-confidentialite" },
+        { label: "Legal notice", href: "/mentions-legales" },
+      ];
   const { footerRef } = useFooterScroll();
 
   return (
@@ -107,13 +117,15 @@ export default function Footer() {
             data-footer-tagline
             className="font-manrope font-bold text-[20px] text-title leading-normal"
           >
-            Öpixxel transforme tes idées en sites animés qui convertissent.
+            {language === "fr"
+              ? "Öpixxel transforme tes idées en sites animés qui convertissent."
+              : "Öpixxel turns your ideas into animated websites that convert."}
           </p>
 
           {/* Explorer */}
           <div data-footer-col className="flex flex-col gap-[20px] shrink-0">
             <p className="font-manrope font-bold text-[20px] text-title leading-normal whitespace-nowrap">
-              Explorer
+              {language === "fr" ? "Explorer" : "Explore"}
             </p>
             <ul className="flex flex-col gap-[6px] font-manrope font-light text-[18px] text-label leading-normal">
               {explorer.map(({ label, href }) => (
@@ -144,7 +156,7 @@ export default function Footer() {
           {/* Suivez-moi */}
           <div data-footer-col className="flex flex-col gap-[20px] shrink-0">
             <p className="font-manrope font-bold text-[20px] text-title leading-normal whitespace-nowrap">
-              Suivez-moi
+              {language === "fr" ? "Suivez-moi" : "Follow me"}
             </p>
             <ul className="flex flex-col gap-[6px] font-manrope font-light text-[18px] text-label leading-normal">
               {social.map(({ label, href }) => (
@@ -171,7 +183,7 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 className="font-manrope font-bold text-[20px] text-accent leading-normal hover:opacity-80 transition-opacity duration-200 cursor-pointer whitespace-nowrap"
               >
-                Démarrer mon projet
+                {language === "fr" ? "Démarrer mon projet" : "Start a project"}
               </a>
               <div className="mt-[10px] h-px w-full bg-[#999994] opacity-60" />
             </div>
