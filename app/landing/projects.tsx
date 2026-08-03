@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTextReveal } from "@/animation-gsap/use-text-reveal";
@@ -56,9 +57,23 @@ const projectData = [
   // },
 ];
 
+const explorationData = [
+  {
+    title: "SBcare",
+    description: {
+      fr: "Une expérience skincare repensée de fond en comble.",
+      en: "A skincare experience redesigned from the ground up.",
+    },
+    date: "2026",
+    url: "/projets/sbcare",
+    image: "/images/case-studies/sbcare-after.png",
+    internal: true,
+  },
+];
+
 export default function Projects() {
   const { language } = useLanguage();
-  const projects = projectData.map((project) => ({
+  const projects = [...projectData, ...explorationData].map((project) => ({
     ...project,
     description: project.description[language],
   }));
@@ -96,9 +111,27 @@ export default function Projects() {
           duration: 0.6,
           ease: "power3.out",
           delay: i * 0.08,
-          scrollTrigger: { trigger: list, start: "top 82%", once: true },
+          scrollTrigger: { trigger: row, start: "top 84%", once: true },
         });
       });
+
+      const explorationIntro = list.querySelector<HTMLElement>(
+        "[data-exploration-intro]",
+      );
+      if (explorationIntro) {
+        gsap.from(explorationIntro.children, {
+          opacity: 0,
+          y: 45,
+          duration: 0.7,
+          stagger: 0.1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: explorationIntro,
+            start: "top 84%",
+            once: true,
+          },
+        });
+      }
     }, list);
 
     return () => ctx.revert();
@@ -157,7 +190,7 @@ export default function Projects() {
     cursorYTo.current?.(cy);
   };
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     lastPointer.current = { x: e.clientX, y: e.clientY };
     // Snap uniquement au premier mouvement (label pas encore visible)
     moveTo(e.clientX, e.clientY, !isVisible.current);
@@ -220,25 +253,68 @@ export default function Projects() {
     });
   };
 
-  return (
-    <div className="w-full">
-      {/* Header */}
+  const renderProject = (
+    project: (typeof projects)[number],
+    index: number,
+    dark = false,
+  ) => (
+    <Link
+      className="cursor-none"
+      key={project.title}
+      href={project.url}
+      target={
+        project.url && !("internal" in project && project.internal)
+          ? "_blank"
+          : undefined
+      }
+      rel={
+        project.url && !("internal" in project && project.internal)
+          ? "noreferrer"
+          : undefined
+      }
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleLeave}
+    >
       <div
-        ref={headerRef}
-        className="mb-6 flex flex-wrap items-baseline gap-x-3 gap-y-1 md:mb-40 xl:items-center"
+        className="flex items-center justify-between gap-4 py-6 font-manrope transition-opacity duration-300"
+        style={{
+          opacity: activeIndex !== null && activeIndex !== index ? 0.3 : 1,
+        }}
+        onMouseEnter={(event) => handleEnter(index, event)}
       >
+        <div className="flex flex-col gap-0.5 md:flex-row md:flex-wrap md:items-baseline md:gap-x-2 md:gap-y-1">
+          <h3
+            className={`heading-3 font-regular transition-colors duration-200 ${
+              activeIndex === index
+                ? "text-accent"
+                : dark
+                  ? "text-white"
+                  : "text-title"
+            }`}
+          >
+            {project.title}
+          </h3>
+          <p
+            className={`text-[14px] font-extralight md:text-[16px] xl:text-[20px] ${
+              dark ? "text-white/55" : "text-body"
+            }`}
+          >
+            {project.description}
+          </p>
+        </div>
         <span
-          data-eyebrow
-          className="text-accent text-xs md:text-sm tracking-wide font-medium"
+          className={`shrink-0 text-[10px] font-light md:text-[20px] ${
+            dark ? "text-white/40" : "text-label"
+          }`}
         >
-          {language === "fr" ? "// ce que je construis" : "// selected work"}
+          {project.date}
         </span>
-        <h2 data-heading className="font-bricolage heading-2 text-title">
-          {language === "fr" ? "Plutôt que de l’expliquer." : "Better shown than told."}
-        </h2>
       </div>
+    </Link>
+  );
 
-      {/* Liste */}
+  return (
+    <div className="relative w-full">
       <div
         ref={(el) => {
           (
@@ -247,46 +323,58 @@ export default function Projects() {
           (listRef as React.MutableRefObject<HTMLDivElement | null>).current =
             el;
         }}
-        className="relative flex flex-col divide-y divide-stroke border-y border-stroke md:cursor-none"
-        onMouseMove={handleMouseMove}
+        className="relative w-full"
         onMouseLeave={handleLeave}
       >
-        {projects.map((p, index) => (
-          <a
-            className="cursor-none"
-            key={index}
-            href={p.url ?? undefined}
-            target={p.url ? "_blank" : undefined}
-            rel={p.url ? "noreferrer" : undefined}
-            aria-label={p.url ? undefined : `${p.title} — aperçu du projet`}
+        <div className="container flex min-h-screen flex-col justify-center py-16 xl:py-24">
+          <div
+            ref={headerRef}
+            className="mb-6 flex flex-wrap items-baseline gap-x-3 gap-y-1 md:mb-40 xl:items-center"
           >
-            <div
-              className="flex items-center justify-between gap-4 py-6 font-manrope transition-opacity duration-300"
-              style={{
-                opacity:
-                  activeIndex !== null && activeIndex !== index ? 0.3 : 1,
-              }}
-              onMouseEnter={(e) => handleEnter(index, e)}
+            <span
+              data-eyebrow
+              className="text-accent text-xs font-medium tracking-wide md:text-sm"
             >
-              {/* Mobile : flex-col titre + desc / Desktop : row */}
-              <div className="flex flex-col gap-0.5 md:flex-row md:flex-wrap md:items-baseline md:gap-x-2 md:gap-y-1">
-                <h3
-                  className={`heading-3 font-regular transition-colors duration-200 ${
-                    activeIndex === index ? "text-accent" : "text-title"
-                  }`}
-                >
-                  {p.title}
-                </h3>
-                <p className="text-[14px] font-extralight text-body md:text-[16px] xl:text-[20px]">
-                  {p.description}
-                </p>
-              </div>
-              <span className="text-[10px] font-light text-label shrink-0 md:text-[20px]">
-                {p.date}
+              {language === "fr" ? "// ce que je construis" : "// selected work"}
+            </span>
+            <h2 data-heading className="heading-2 font-bricolage text-title">
+              {language === "fr"
+                ? "Plutôt que de l’expliquer."
+                : "Better shown than told."}
+            </h2>
+          </div>
+          <div className="flex flex-col divide-y divide-stroke border-y border-stroke md:cursor-none">
+            {projects
+              .slice(0, projectData.length)
+              .map((project, index) => renderProject(project, index))}
+          </div>
+        </div>
+
+        <section className="flex min-h-screen flex-col justify-center bg-dark text-white">
+          <div className="container py-16 xl:py-24">
+            <div data-exploration-intro className="mb-16 md:mb-28">
+              <span className="mb-3 block text-xs font-medium tracking-wide text-accent md:text-sm">
+                {language === "fr" ? "// terrains d’essai" : "// testing grounds"}
               </span>
+              <h3 className="text-balance font-bricolage text-4xl font-medium leading-none tracking-[-0.04em] text-white md:text-5xl xl:text-6xl">
+                {language === "fr"
+                  ? "Reprendre. Repenser."
+                  : "Revisit. Rethink."}
+              </h3>
             </div>
-          </a>
-        ))}
+            <div className="flex flex-col divide-y divide-white/15 border-y border-white/15 md:cursor-none">
+              {projects
+                .slice(projectData.length)
+                .map((project, explorationIndex) =>
+                  renderProject(
+                    project,
+                    projectData.length + explorationIndex,
+                    true,
+                  ),
+                )}
+            </div>
+          </div>
+        </section>
 
         {/* Curseur pointer personnalisé */}
         <div

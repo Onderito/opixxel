@@ -33,9 +33,9 @@ export default function Home() {
         <Presentation />
       </Section>
 
-      <Section id="projets" bg="bg-canvas">
+      <section id="projets" className="bg-canvas">
         <Projects />
-      </Section>
+      </section>
 
       <Section id="methode" bg="bg-surface">
         <Step />

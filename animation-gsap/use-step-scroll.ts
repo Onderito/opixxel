@@ -13,7 +13,7 @@ export function useStepScroll() {
 
     const mm = gsap.matchMedia();
 
-    mm.add("(min-width: 1280px)", () => {
+    mm.add("(min-width: 1280px) and (prefers-reduced-motion: no-preference)", () => {
       const ctx = gsap.context(() => {
 
         // ── Cards ──────────────────────────────────────────────
@@ -23,17 +23,46 @@ export function useStepScroll() {
           xlLayout ?? section,
         );
         cards.forEach((card, i) => {
-          const fromX = i === 1 ? 160 : -160;
-          gsap.set(card, { opacity: 0, y: 80, x: fromX, rotate: i === 1 ? 4 : -4 });
-          gsap.to(card, {
-            opacity: 1,
-            y: 0,
-            x: 0,
-            rotate: 0,
-            duration: 0.7,
-            ease: "back.out(1.4)",
-            scrollTrigger: { trigger: card, start: "top 80%" },
+          const details = Array.from(card.children);
+          const fromX = i % 2 === 0 ? -28 : 28;
+
+          gsap.set(card, {
+            opacity: 0,
+            x: fromX,
+            y: 42,
+            scale: 0.985,
+            filter: "blur(6px)",
+            transformOrigin: "center bottom",
           });
+          gsap.set(details, { opacity: 0, y: 14 });
+
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: card,
+              start: "top 82%",
+              once: true,
+            },
+          });
+          tl.to(card, {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            scale: 1,
+            filter: "blur(0px)",
+            duration: 1.05,
+            ease: "power3.out",
+          });
+          tl.to(
+            details,
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.55,
+              stagger: 0.07,
+              ease: "power2.out",
+            },
+            "-=0.58",
+          );
         });
 
         // ── Flèches ────────────────────────────────────────────
@@ -160,19 +189,47 @@ export function useStepScroll() {
     });
 
     // ── Mobile + tablet (< 1280px) ─────────────────────────────
-    mm.add("(max-width: 1279px)", () => {
+    mm.add("(max-width: 1279px) and (prefers-reduced-motion: no-preference)", () => {
       const ctx = gsap.context(() => {
         const cards = gsap.utils.toArray<HTMLElement>("[data-step-card]", section);
 
         cards.forEach((card) => {
-          gsap.set(card, { opacity: 0, y: 50 });
-          gsap.to(card, {
+          const details = Array.from(card.children);
+          gsap.set(card, {
+            opacity: 0,
+            y: 28,
+            scale: 0.99,
+            filter: "blur(4px)",
+            transformOrigin: "center bottom",
+          });
+          gsap.set(details, { opacity: 0, y: 10 });
+
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: card,
+              start: "top 88%",
+              once: true,
+            },
+          });
+          tl.to(card, {
             opacity: 1,
             y: 0,
-            duration: 0.65,
-            ease: "back.out(1.5)",
-            scrollTrigger: { trigger: card, start: "top 88%" },
+            scale: 1,
+            filter: "blur(0px)",
+            duration: 0.85,
+            ease: "power3.out",
           });
+          tl.to(
+            details,
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.45,
+              stagger: 0.06,
+              ease: "power2.out",
+            },
+            "-=0.45",
+          );
         });
 
         // ── CTA mobile ─────────────────────────────────────────
@@ -188,6 +245,15 @@ export function useStepScroll() {
       }, sectionRef);
 
       return () => ctx.revert();
+    });
+
+    mm.add("(prefers-reduced-motion: reduce)", () => {
+      gsap.set(
+        section.querySelectorAll(
+          "[data-step-card], [data-step-card] > *, [data-step-cta], [data-step-cta-mobile]",
+        ),
+        { opacity: 1, x: 0, y: 0, scale: 1, filter: "none" },
+      );
     });
 
     return () => mm.revert();

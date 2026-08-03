@@ -7,9 +7,9 @@ gsap.registerPlugin(ScrollTrigger);
 // ─────────────────────────────────────────────────────────────────────────────
 // Présentation — révélation des images/badges au scroll.
 //
-// Effet : chaque élément est "collé" au texte (largeur 0), puis s'ouvre en deux
-// depuis le centre tout en poussant le texte. Les éléments s'animent l'un après
-// l'autre (tour à tour), le tout synchronisé au scroll (scrub) en douceur.
+// Effet : la largeur de chaque élément part de zéro au centre de sa ligne puis
+// s'ouvre progressivement. Comme les lignes sont centrées, le texte se répartit
+// simultanément vers la gauche et la droite.
 //
 // Structure DOM attendue (cf. presentation.tsx) :
 //   <span data-clip>              ← conteneur dont la largeur s'anime 0 → W
@@ -17,9 +17,9 @@ gsap.registerPlugin(ScrollTrigger);
 //       …
 // ─────────────────────────────────────────────────────────────────────────────
 
-const DURATION = 1.4; // durée d'ouverture d'un élément (unités timeline)
-const STEP = 1.15; // décalage entre deux éléments (overlap = DURATION - STEP)
-const OPEN_EASE = "power1.inOut"; // démarrage ET fin en douceur → ouverture calme
+const DURATION = 1.8;
+const STEP = 1.1;
+const OPEN_EASE = "sine.inOut";
 
 export function usePresentationScroll(refreshKey: string) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -38,33 +38,33 @@ export function usePresentationScroll(refreshKey: string) {
           const inner = clip.querySelector<HTMLElement>("[data-clip-inner]");
           if (!inner) return;
 
-          // 1. Mesure des dimensions naturelles (avant de replier).
           const naturalW = inner.offsetWidth;
           const naturalH = inner.offsetHeight;
 
-          // 2. État initial : conteneur fermé, contenu centré en absolu.
-          //    Le contenu en absolu + overflow hidden = on ne voit que la
-          //    bande centrale, qui s'élargira vers la gauche ET la droite.
-          gsap.set(clip, { width: 0, height: naturalH, overflow: "hidden" });
+          gsap.set(clip, {
+            width: 0,
+            height: naturalH,
+            overflow: "hidden",
+          });
           gsap.set(inner, {
             position: "absolute",
             left: "50%",
             top: 0,
             xPercent: -50,
-            scale: 1.05,
-            opacity: 0.6,
+            scale: 0.995,
+            opacity: 0.82,
             willChange: "transform, opacity",
             transformOrigin: "center center",
           });
 
-          // 3. Animation, positionnée en cascade (tour à tour).
-          //    Easing "power1.inOut" : l'ouverture démarre lentement, monte
-          //    à peine en vitesse puis se pose en douceur → pas d'effet
-          //    « boum », tout en restant piloté par le scroll (scrub).
           const at = i * STEP;
           tl.to(
             clip,
-            { width: naturalW, duration: DURATION, ease: OPEN_EASE },
+            {
+              width: naturalW,
+              duration: DURATION,
+              ease: OPEN_EASE,
+            },
             at,
           );
           tl.to(
@@ -98,8 +98,8 @@ export function usePresentationScroll(refreshKey: string) {
             left: "50%",
             top: 0,
             xPercent: -50,
-            scale: 1.04,
-            opacity: 0.65,
+            scale: 0.995,
+            opacity: 0.82,
             transformOrigin: "center center",
             willChange: "transform, opacity",
           });
@@ -133,16 +133,13 @@ export function usePresentationScroll(refreshKey: string) {
     // Animation uniquement sur desktop (≥768px). Sur mobile, les images
     // restent dans le flux normal (visibles, pas de width:0) → aucun
     // risque qu'elles restent fermées ou débordent horizontalement.
-    mm.add("(min-width: 768px)", () =>
+    mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () =>
       build({
         trigger: section,
-        // La séquence commence un peu plus tôt et se déroule sur une plus
-        // grande portion de scroll → chaque élément a le temps de respirer.
         start: "top 80%",
-        end: "bottom 65%",
-        // scrub numérique : la timeline « rattrape » le scroll avec ~1.2s de
-        // lissage → mouvement calme et régulier, sans à-coups.
-        scrub: 1.2,
+        end: "bottom 35%",
+        // L'inertie absorbe les grands écarts produits par un scroll rapide.
+        scrub: 2.2,
       }),
     );
 
