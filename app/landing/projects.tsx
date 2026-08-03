@@ -11,6 +11,16 @@ gsap.registerPlugin(ScrollTrigger);
 
 const projectData = [
   {
+    title: "Maison des Muses",
+    description: {
+      fr: "Un écrin digital sensible pour un institut de beauté.",
+      en: "A refined digital home for a beauty institute.",
+    },
+    date: "2026",
+    url: "https://maison-des-muses.vercel.app/",
+    image: "/images/maison-des-muses.png",
+  },
+  {
     title: "Kokolimo",
     description: {
       fr: "Un site premium pour une clientèle premium.",
@@ -245,9 +255,10 @@ export default function Projects() {
           <a
             className="cursor-none"
             key={index}
-            href={p.url}
-            target="_blank"
-            rel="noreferrer"
+            href={p.url ?? undefined}
+            target={p.url ? "_blank" : undefined}
+            rel={p.url ? "noreferrer" : undefined}
+            aria-label={p.url ? undefined : `${p.title} — aperçu du projet`}
           >
             <div
               className="flex items-center justify-between gap-4 py-6 font-manrope transition-opacity duration-300"

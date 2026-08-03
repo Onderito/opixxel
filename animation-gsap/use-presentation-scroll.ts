@@ -31,6 +31,7 @@ export function usePresentationScroll(refreshKey: string) {
     const build = (scrollTrigger: ScrollTrigger.Vars) => {
       const ctx = gsap.context(() => {
         const clips = gsap.utils.toArray<HTMLElement>("[data-clip]", section);
+        const cta = section.querySelector<HTMLElement>("[data-presentation-cta]");
         const tl = gsap.timeline({ scrollTrigger });
 
         clips.forEach((clip, i) => {
@@ -77,6 +78,51 @@ export function usePresentationScroll(refreshKey: string) {
             at,
           );
         });
+
+        if (cta) {
+          const ctaInner = cta.querySelector<HTMLElement>(
+            "[data-presentation-cta-inner]",
+          );
+          if (!ctaInner) return;
+
+          const ctaAt = clips.length * STEP + 0.1;
+          const naturalW = ctaInner.offsetWidth;
+          const naturalH = ctaInner.offsetHeight;
+          gsap.set(cta, {
+            width: 0,
+            height: naturalH,
+            overflow: "hidden",
+          });
+          gsap.set(ctaInner, {
+            position: "absolute",
+            left: "50%",
+            top: 0,
+            xPercent: -50,
+            scale: 1.04,
+            opacity: 0.65,
+            transformOrigin: "center center",
+            willChange: "transform, opacity",
+          });
+          tl.to(
+            cta,
+            {
+              width: naturalW,
+              duration: DURATION,
+              ease: OPEN_EASE,
+            },
+            ctaAt,
+          );
+          tl.to(
+            ctaInner,
+            {
+              scale: 1,
+              opacity: 1,
+              duration: DURATION,
+              ease: OPEN_EASE,
+            },
+            ctaAt,
+          );
+        }
       }, sectionRef);
 
       return () => ctx.revert();

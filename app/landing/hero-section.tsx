@@ -161,7 +161,7 @@ export default function HeroSection() {
             </nav>
           </div>
 
-          <div className="flex shrink-0 items-center gap-3 sm:gap-5 xl:self-start">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <LayoutGroup id="language-switch">
               <div
                 className="flex h-10 items-center rounded-full bg-surface p-1 shadow-[0_1px_3px_rgba(17,17,16,0.08)]"
@@ -196,6 +196,9 @@ export default function HeroSection() {
                 ))}
               </div>
             </LayoutGroup>
+          </div>
+
+          <div className="flex shrink-0 items-center gap-3 sm:gap-5 xl:self-start">
             <a
               ref={ctaRef}
               href="https://calendly.com/ulas-onder/30min"
