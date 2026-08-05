@@ -262,6 +262,7 @@ export default function Projects() {
       className="cursor-none"
       key={project.title}
       href={project.url}
+      scroll={"internal" in project && project.internal ? true : undefined}
       target={
         project.url && !("internal" in project && project.internal)
           ? "_blank"
@@ -274,6 +275,11 @@ export default function Projects() {
       }
       onMouseMove={handleMouseMove}
       onMouseLeave={handleLeave}
+      onClick={() => {
+        if ("internal" in project && project.internal) {
+          window.scrollTo(0, 0);
+        }
+      }}
     >
       <div
         className="flex items-center justify-between gap-4 py-6 font-manrope transition-opacity duration-300"
@@ -299,7 +305,15 @@ export default function Projects() {
               dark ? "text-white/55" : "text-body"
             }`}
           >
-            {project.description}
+            {language === "en" && project.title === "SBcare" ? (
+              <>
+                A skincare experience redesigned from{" "}
+                <br className="md:hidden" />
+                the ground up.
+              </>
+            ) : (
+              project.description
+            )}
           </p>
         </div>
         <span

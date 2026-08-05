@@ -120,7 +120,7 @@ function renderLine(line: string, key: number) {
 export default function PolitiqueConfidentialite() {
   return (
     <main className="bg-canvas min-h-screen">
-      <div className="max-w-[720px] mx-auto px-6 py-16 xl:py-24">
+      <div className="max-w-[720px] mx-auto px-6 pb-16 pt-36 md:pt-44 xl:pb-24 xl:pt-48">
         {/* Retour */}
         <Link
           href="/"

@@ -23,12 +23,16 @@ gsap.registerPlugin(ScrollTrigger);
 //   </div>
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function useTextReveal() {
+export function useTextReveal({
+  simpleOnMobile = false,
+}: { simpleOnMobile?: boolean } = {}) {
   const ref = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     const container = ref.current;
     if (!container) return;
+    const useSimpleReveal =
+      simpleOnMobile && window.matchMedia("(max-width: 767px)").matches;
 
     const ctx = gsap.context(() => {
       const eyebrow = container.querySelector<HTMLElement>("[data-eyebrow]");
@@ -40,15 +44,22 @@ export function useTextReveal() {
       // ── États initiaux ──────────────────────────────────────────────────────
 
       // Eyebrow : hors-champ à gauche, invisible
-      if (eyebrow) gsap.set(eyebrow, { opacity: 0, x: -28 });
+      if (eyebrow) {
+        gsap.set(
+          eyebrow,
+          useSimpleReveal ? { opacity: 0, y: 10 } : { opacity: 0, x: -28 },
+        );
+      }
 
       // Heading : clipPath qui masque par le bas + décalage vertical
       // → même vocabulaire que les mots de la présentation
       if (heading) {
-        gsap.set(heading, {
-          y: 52,
-          clipPath: "inset(0 0 110% 0)",
-        });
+        gsap.set(
+          heading,
+          useSimpleReveal
+            ? { opacity: 0, y: 18 }
+            : { y: 52, clipPath: "inset(0 0 110% 0)" },
+        );
       }
 
       // Description : décalée vers le bas, invisible
@@ -67,7 +78,9 @@ export function useTextReveal() {
       if (eyebrow) {
         tl.to(
           eyebrow,
-          { opacity: 1, x: 0, duration: 0.55, ease: "power3.out" },
+          useSimpleReveal
+            ? { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }
+            : { opacity: 1, x: 0, duration: 0.55, ease: "power3.out" },
           0,
         );
       }
@@ -76,13 +89,15 @@ export function useTextReveal() {
       if (heading) {
         tl.to(
           heading,
-          {
-            y: 0,
-            clipPath: "inset(0 0 0% 0)",
-            duration: 1,
-            ease: "power4.out",
-          },
-          0.14,
+          useSimpleReveal
+            ? { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }
+            : {
+                y: 0,
+                clipPath: "inset(0 0 0% 0)",
+                duration: 1,
+                ease: "power4.out",
+              },
+          useSimpleReveal ? 0.08 : 0.14,
         );
       }
 
@@ -97,7 +112,7 @@ export function useTextReveal() {
     }, ref);
 
     return () => ctx.revert();
-  }, []);
+  }, [simpleOnMobile]);
 
   return { ref };
 }

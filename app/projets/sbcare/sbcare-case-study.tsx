@@ -5,34 +5,112 @@ import Link from "next/link";
 import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useLanguage } from "@/app/ui/language-context";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const facts = [
-  ["Mission", "Redesign e-commerce"],
-  ["Rôle", "Direction artistique, UI/UX, développement"],
-  ["Année", "2026"],
-] as const;
-
-const decisions = [
-  {
-    number: "01",
-    title: "Clarifier dès le premier regard.",
-    text: "La nouvelle entrée de page articule immédiatement la promesse, les preuves de confiance et les deux actions essentielles : découvrir les produits ou réserver un soin.",
+const copy = {
+  fr: {
+    back: "Tous les projets",
+    eyebrow: "// Case study — beauté & e-commerce",
+    intro:
+      "Repenser une boutique de soins pour en faire une expérience de marque plus claire, plus humaine et naturellement premium.",
+    heroAlt: "Nouvelle page d’accueil SBcare",
+    projectEyebrow: "// Le projet",
+    projectLead: "L’ancien site montrait les soins. Le redesign devait faire ressentir la marque —",
+    projectLeadAccent: "et guider chaque visite vers le bon geste.",
+    facts: [
+      ["Mission", "Redesign e-commerce"],
+      ["Rôle", "Direction artistique, UI/UX, développement"],
+      ["Année", "2026"],
+    ],
+    comparisonEyebrow: "// Avant · après",
+    comparisonTitle: "Même marque. Nouvelle sensation.",
+    comparisonLabel: "Choisir la version du site à afficher",
+    before: "Avant",
+    after: "Après",
+    beforeAlt: "Ancienne version du site SBcare",
+    afterAlt: "Nouvelle version du site SBcare",
+    decisionsEyebrow: "// Trois décisions structurantes",
+    decisions: [
+      {
+        number: "01",
+        title: "Clarifier dès le premier regard.",
+        text: "La nouvelle entrée de page articule immédiatement la promesse, les preuves de confiance et les deux actions essentielles : découvrir les produits ou réserver un soin.",
+      },
+      {
+        number: "02",
+        title: "Faire de l’image une matière de marque.",
+        text: "La photographie devient le cœur de l’expérience. Une grille plus généreuse, un grain assumé et une palette sauge et bleu ciel installent un univers sensible et reconnaissable.",
+      },
+      {
+        number: "03",
+        title: "Transformer sans brusquer.",
+        text: "Les produits, les services et les bénéfices ont chacun une place claire. Le parcours conserve une respiration éditoriale tout en rapprochant les points de conversion.",
+      },
+    ],
+    resultEyebrow: "// Le résultat",
+    resultTitle: "Plus calme.",
+    resultTitleAccent: "Plus évident.",
+    resultText:
+      "Une expérience qui laisse davantage respirer la marque, tout en rapprochant naturellement les produits, les soins et les preuves de confiance.",
+    resultAlt: "Vue complète de la nouvelle expérience SBcare",
+    continueEyebrow: "// Continuer",
+    projectsCta: "Retour aux projets",
   },
-  {
-    number: "02",
-    title: "Faire de l’image une matière de marque.",
-    text: "La photographie devient le cœur de l’expérience. Une grille plus généreuse, un grain assumé et une palette sauge et bleu ciel installent un univers sensible et reconnaissable.",
+  en: {
+    back: "All projects",
+    eyebrow: "// Case study — beauty & e-commerce",
+    intro:
+      "Reimagining a skincare store as a clearer, more human and naturally premium brand experience.",
+    heroAlt: "New SBcare homepage",
+    projectEyebrow: "// The project",
+    projectLead: "The former website displayed the treatments. The redesign had to make the brand feel tangible —",
+    projectLeadAccent: "and guide every visitor towards the right choice.",
+    facts: [
+      ["Mission", "E-commerce redesign"],
+      ["Role", "Art direction, UI/UX, development"],
+      ["Year", "2026"],
+    ],
+    comparisonEyebrow: "// Before · after",
+    comparisonTitle: "Same brand. A whole new feeling.",
+    comparisonLabel: "Choose which version of the website to display",
+    before: "Before",
+    after: "After",
+    beforeAlt: "Previous version of the SBcare website",
+    afterAlt: "New version of the SBcare website",
+    decisionsEyebrow: "// Three defining decisions",
+    decisions: [
+      {
+        number: "01",
+        title: "Make everything clear at first glance.",
+        text: "The new opening section immediately brings together the promise, trust signals and two essential actions: discovering the products or booking a treatment.",
+      },
+      {
+        number: "02",
+        title: "Turn imagery into a brand signature.",
+        text: "Photography becomes the heart of the experience. A more generous grid, intentional grain and a sage-and-sky-blue palette create a distinctive, emotive world.",
+      },
+      {
+        number: "03",
+        title: "Drive conversion without the hard sell.",
+        text: "Products, services and benefits each have a clear place. The journey retains its editorial rhythm while bringing conversion points closer at hand.",
+      },
+    ],
+    resultEyebrow: "// The outcome",
+    resultTitle: "More serene.",
+    resultTitleAccent: "More intuitive.",
+    resultText:
+      "An experience that gives the brand more room to breathe while naturally connecting products, treatments and trust signals.",
+    resultAlt: "Full view of the new SBcare experience",
+    continueEyebrow: "// Keep exploring",
+    projectsCta: "Back to projects",
   },
-  {
-    number: "03",
-    title: "Transformer sans brusquer.",
-    text: "Les produits, les services et les bénéfices ont chacun une place claire. Le parcours conserve une respiration éditoriale tout en rapprochant les points de conversion.",
-  },
-] as const;
+} as const;
 
 export default function SbcareCaseStudy() {
+  const { language } = useLanguage();
+  const text = copy[language];
   const pageRef = useRef<HTMLElement>(null);
   const comparisonAfterRef = useRef<HTMLDivElement>(null);
   const [comparisonMode, setComparisonMode] = useState<"before" | "after">(
@@ -57,6 +135,12 @@ export default function SbcareCaseStudy() {
   };
 
   useLayoutEffect(() => {
+    // Lenis persiste entre les routes : réinitialiser sa position native au
+    // montage garantit que le case study commence toujours tout en haut.
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+
     const page = pageRef.current;
     if (!page) return;
 
@@ -146,13 +230,11 @@ export default function SbcareCaseStudy() {
 
   return (
     <main ref={pageRef} className="min-h-screen bg-canvas text-title">
-      <nav
-        data-hero-nav
-        className="container flex items-center justify-between !py-5 md:!py-7"
-      >
+      <header className="container !pt-28 md:!pt-32 xl:!pt-36">
         <Link
           href="/#projets"
-          className="group inline-flex min-h-11 items-center gap-2 text-sm font-medium"
+          data-hero-nav
+          className="group fixed left-6 top-6 z-[100] inline-flex min-h-11 items-center gap-2 rounded-full bg-surface px-4 text-sm font-medium shadow-[0_8px_24px_rgba(17,17,16,0.08)] transition-transform duration-200 active:scale-[0.96] md:left-12 md:top-10"
         >
           <span
             aria-hidden
@@ -160,24 +242,19 @@ export default function SbcareCaseStudy() {
           >
             ←
           </span>
-          Tous les projets
+          {text.back}
         </Link>
-        <span className="font-bricolage text-lg font-bold italic">Öpixxel.</span>
-      </nav>
-
-      <header className="container !pt-14 md:!pt-24 xl:!pt-28">
         <div data-hero-copy className="grid gap-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
             <p className="mb-5 text-xs font-medium uppercase tracking-[0.18em] text-accent md:text-sm">
-              {"// Case study — beauté & e-commerce"}
+              {text.eyebrow}
             </p>
             <h1 className="max-w-5xl text-balance font-bricolage text-[clamp(4.5rem,14vw,12rem)] font-medium leading-[0.78] tracking-[-0.08em]">
               SBcare
             </h1>
           </div>
           <p className="max-w-md text-pretty text-base leading-relaxed text-body lg:col-span-4 lg:ml-auto lg:pb-2 lg:text-right lg:text-lg">
-            Repenser une boutique de soins pour en faire une expérience de marque
-            plus claire, plus humaine et naturellement premium.
+            {text.intro}
           </p>
         </div>
 
@@ -188,7 +265,7 @@ export default function SbcareCaseStudy() {
         >
           <Image
             src="/images/case-studies/sbcare-hero-clean.webp"
-            alt="Nouvelle page d’accueil SBcare"
+            alt={text.heroAlt}
             fill
             priority
             sizes="(max-width: 768px) 100vw, 1400px"
@@ -200,22 +277,21 @@ export default function SbcareCaseStudy() {
       <section className="container border-b border-stroke !pt-12 !pb-6 md:!py-28">
         <div className="grid gap-6 lg:grid-cols-12 lg:gap-12">
           <p data-reveal className="text-xs font-medium uppercase tracking-[0.18em] text-accent lg:col-span-3">
-            {"// Le projet"}
+            {text.projectEyebrow}
           </p>
           <div className="lg:col-span-9">
             <p data-reveal className="max-w-5xl text-pretty font-bricolage text-3xl font-medium leading-[1.08] tracking-[-0.04em] md:text-5xl xl:text-6xl">
-              L’ancien site montrait les soins. Le redesign devait faire ressentir
-              la marque —{" "}
+              {text.projectLead}{" "}
               <span className="text-label">
-                et guider chaque visite vers le bon geste.
+                {text.projectLeadAccent}
               </span>
             </p>
             <dl className="mt-10 grid w-full gap-5 border-t border-stroke pt-6 md:mt-16 md:grid-cols-3 md:gap-7 md:pt-7">
-              {facts.map(([label, value], index) => (
+              {text.facts.map(([label, value], index) => (
                 <div
                   data-reveal
                   key={label}
-                  className={index === facts.length - 1 ? "md:justify-self-end md:text-right" : undefined}
+                  className={index === text.facts.length - 1 ? "md:justify-self-end md:text-right" : undefined}
                 >
                   <dt className="mb-2 text-xs uppercase tracking-[0.14em] text-label">
                     {label}
@@ -232,15 +308,15 @@ export default function SbcareCaseStudy() {
         <div data-reveal className="mb-12 flex flex-col gap-5 md:mb-20 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-accent">
-              {"// Avant · après"}
+              {text.comparisonEyebrow}
             </p>
             <h2 className="max-w-3xl text-balance font-bricolage text-4xl font-medium leading-none tracking-[-0.05em] md:text-6xl xl:text-7xl">
-              Même marque. Nouvelle sensation.
+              {text.comparisonTitle}
             </h2>
           </div>
           <div
             role="group"
-            aria-label="Choisir la version du site à afficher"
+            aria-label={text.comparisonLabel}
             className="inline-flex w-fit rounded-full bg-surface p-1 shadow-[0_8px_24px_rgba(17,17,16,0.08)]"
           >
             {(["before", "after"] as const).map((mode) => (
@@ -255,7 +331,7 @@ export default function SbcareCaseStudy() {
                     : "text-body hover:text-title"
                 }`}
               >
-                {mode === "before" ? "Avant" : "Après"}
+                {mode === "before" ? text.before : text.after}
               </button>
             ))}
           </div>
@@ -267,7 +343,7 @@ export default function SbcareCaseStudy() {
         >
           <Image
             src="/images/case-studies/sbcare-before.png"
-            alt="Ancienne version du site SBcare"
+            alt={text.beforeAlt}
             fill
             sizes="100vw"
             className="object-cover object-top"
@@ -280,7 +356,7 @@ export default function SbcareCaseStudy() {
           >
             <Image
               src="/images/case-studies/sbcare-hero-clean.webp"
-              alt="Nouvelle version du site SBcare"
+              alt={text.afterAlt}
               fill
               sizes="100vw"
               className="object-contain object-top"
@@ -292,10 +368,10 @@ export default function SbcareCaseStudy() {
       <section className="bg-dark text-white">
         <div className="container !py-20 md:!py-32">
           <p data-reveal className="mb-16 text-xs font-medium uppercase tracking-[0.18em] text-accent md:mb-24">
-            {"// Trois décisions structurantes"}
+            {text.decisionsEyebrow}
           </p>
           <div className="divide-y divide-white/15 border-y border-white/15">
-            {decisions.map((decision) => (
+            {text.decisions.map((decision) => (
               <article
                 data-decision
                 key={decision.number}
@@ -318,19 +394,17 @@ export default function SbcareCaseStudy() {
         <div className="container !py-0">
           <div data-reveal className="mb-12 grid gap-8 md:mb-20 lg:grid-cols-12">
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent lg:col-span-3">
-              {"// Le résultat"}
+              {text.resultEyebrow}
             </p>
             <div className="lg:col-span-9">
               <h2 className="text-balance font-bricolage text-5xl font-medium leading-[0.88] tracking-[-0.06em] md:text-7xl xl:text-9xl">
-                Plus calme.
+                {text.resultTitle}
                 <span className="block pl-[0.7em] font-bold italic text-accent md:pl-[1.25em]">
-                  Plus évident.
+                  {text.resultTitleAccent}
                 </span>
               </h2>
               <p className="ml-auto mt-10 max-w-md text-pretty text-sm leading-relaxed text-body md:mt-14 md:text-base">
-                Une expérience qui laisse davantage respirer la marque, tout en
-                rapprochant naturellement les produits, les soins et les preuves
-                de confiance.
+                {text.resultText}
               </p>
             </div>
           </div>
@@ -340,7 +414,7 @@ export default function SbcareCaseStudy() {
           >
             <Image
               src="/images/case-studies/sbcare-after.png"
-              alt="Vue complète de la nouvelle expérience SBcare"
+              alt={text.resultAlt}
               width={1054}
               height={1786}
               sizes="(max-width: 1024px) 100vw, 1024px"
@@ -353,20 +427,14 @@ export default function SbcareCaseStudy() {
       <footer className="bg-canvas">
         <div className="container !py-20 md:!py-28">
           <p data-reveal className="mb-5 text-xs font-medium uppercase tracking-[0.18em] text-accent">
-            {"// Continuer"}
+            {text.continueEyebrow}
           </p>
-          <div data-reveal className="flex flex-col gap-10 border-t border-stroke pt-10 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="mb-3 text-sm text-label">Projet suivant</p>
-              <p className="font-bricolage text-5xl font-medium tracking-[-0.05em] md:text-7xl">
-                Kokolimo
-              </p>
-            </div>
+          <div data-reveal className="flex justify-end border-t border-stroke pt-10">
             <Link
               href="/#projets"
               className="inline-flex min-h-11 items-center justify-center rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white transition-transform duration-300 active:scale-[0.96]"
             >
-              Retour aux projets&nbsp; ↗
+              {text.projectsCta}&nbsp; ↗
             </Link>
           </div>
         </div>

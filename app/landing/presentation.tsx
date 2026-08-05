@@ -191,7 +191,7 @@ export default function Presentation() {
     return row;
   });
   const { sectionRef } = usePresentationScroll(language);
-  const { ref: headerRef } = useTextReveal();
+  const { ref: headerRef } = useTextReveal({ simpleOnMobile: true });
 
   return (
     <section
@@ -200,7 +200,11 @@ export default function Presentation() {
     >
       <div
         ref={headerRef}
-        className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-6 md:mb-40 xl:items-center"
+        className={`flex gap-x-3 gap-y-1 mb-6 md:mb-40 ${
+          language === "en"
+            ? "flex-col items-start"
+            : "flex-wrap items-baseline xl:items-center"
+        }`}
       >
         <span
           data-eyebrow

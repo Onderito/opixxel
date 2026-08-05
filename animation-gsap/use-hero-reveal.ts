@@ -3,20 +3,16 @@ import gsap from "gsap";
 import type { HeroMotionRefs } from "@/animation-gsap/use-hero-motion-refs";
 
 export function useHeroReveal({
-  navRef,
-  ctaRef,
   leftCopyRef,
   rightCopyRef,
   titleRef,
 }: HeroMotionRefs) {
   useLayoutEffect(() => {
-    const navElement = navRef.current;
-    const ctaElement = ctaRef.current;
     const leftCopyElement = leftCopyRef.current;
     const rightCopyElement = rightCopyRef.current;
     const titleElement = titleRef.current;
 
-    if (!ctaElement || !leftCopyElement || !rightCopyElement || !titleElement) {
+    if (!leftCopyElement || !rightCopyElement || !titleElement) {
       return;
     }
 
@@ -33,7 +29,7 @@ export function useHeroReveal({
     };
 
     if (reduceMotion) {
-      gsap.set([navElement, ctaElement, leftCopyElement, rightCopyElement], {
+      gsap.set([leftCopyElement, rightCopyElement], {
         autoAlpha: 1,
         x: 0,
       });
@@ -43,8 +39,6 @@ export function useHeroReveal({
       return;
     }
 
-    gsap.set(navElement, { autoAlpha: 0, x: -72 });
-    gsap.set(ctaElement, { autoAlpha: 0, x: 72 });
     gsap.set(leftCopyElement, { autoAlpha: 0, x: -72 });
     gsap.set(rightCopyElement, { autoAlpha: 0, x: 72 });
     gsap.set(reelElements, { y: 0 });
@@ -64,12 +58,8 @@ export function useHeroReveal({
 
     timeline.addLabel("contentReveal", 0.6);
 
-    if (navElement) {
-      timeline.to(navElement, { autoAlpha: 1, x: 0, duration: 0.8 }, "contentReveal");
-    }
-
     timeline.to(
-      [ctaElement, rightCopyElement],
+      rightCopyElement,
       { autoAlpha: 1, x: 0, duration: 0.8, stagger: 0.06 },
       "contentReveal",
     );
@@ -79,9 +69,9 @@ export function useHeroReveal({
     return () => {
       timeline.kill();
       gsap.set(
-        [navElement, ctaElement, leftCopyElement, rightCopyElement, ...reelElements],
+        [leftCopyElement, rightCopyElement, ...reelElements],
         { clearProps: "all" },
       );
     };
-  }, [ctaRef, leftCopyRef, navRef, rightCopyRef, titleRef]);
+  }, [leftCopyRef, rightCopyRef, titleRef]);
 }

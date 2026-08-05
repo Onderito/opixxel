@@ -85,7 +85,9 @@ export function usePresentationScroll(refreshKey: string) {
           );
           if (!ctaInner) return;
 
-          const ctaAt = clips.length * STEP + 0.1;
+          // Le CTA démarre avec le dernier visuel au lieu d'attendre la fin
+          // complète de la séquence.
+          const ctaAt = Math.max(0, (clips.length - 1) * STEP + 0.25);
           const naturalW = ctaInner.offsetWidth;
           const naturalH = ctaInner.offsetHeight;
           gsap.set(cta, {
@@ -107,8 +109,8 @@ export function usePresentationScroll(refreshKey: string) {
             cta,
             {
               width: naturalW,
-              duration: DURATION,
-              ease: OPEN_EASE,
+              duration: 0.9,
+              ease: "power3.out",
             },
             ctaAt,
           );
@@ -117,8 +119,8 @@ export function usePresentationScroll(refreshKey: string) {
             {
               scale: 1,
               opacity: 1,
-              duration: DURATION,
-              ease: OPEN_EASE,
+              duration: 0.9,
+              ease: "power3.out",
             },
             ctaAt,
           );

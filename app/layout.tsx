@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Caveat, Manrope } from "next/font/google";
 import ClientWrapper from "./ui/client-wrapper";
+import { LanguageProvider } from "./ui/language-context";
+import SiteNavbar from "./ui/site-navbar";
 import "./globals.css";
 
 const bricolageGrotesque = Bricolage_Grotesque({
@@ -37,7 +39,12 @@ export default function RootLayout({
       className={`${bricolageGrotesque.variable} ${manrope.variable} ${caveat.variable} h-full antialiased overflow-x-clip`}
     >
       <body className="min-h-full flex flex-col overflow-x-clip">
-        <ClientWrapper>{children}</ClientWrapper>
+        <ClientWrapper>
+          <LanguageProvider>
+            <SiteNavbar />
+            {children}
+          </LanguageProvider>
+        </ClientWrapper>
       </body>
     </html>
   );
