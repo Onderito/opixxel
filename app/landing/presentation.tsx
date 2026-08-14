@@ -238,28 +238,6 @@ export default function Presentation() {
           </div>
         ))}
 
-        <div className="mt-5 flex w-full justify-center md:mt-8">
-          <span
-            data-presentation-cta
-            className="relative inline-flex shrink-0 overflow-hidden rounded-full align-middle"
-          >
-            <a
-              data-presentation-cta-inner
-              href="https://calendly.com/ulas-onder/30min"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex min-h-11 items-center gap-3 whitespace-nowrap rounded-full bg-title px-5 py-3 font-manrope text-xs font-semibold leading-none tracking-normal text-canvas shadow-[0_8px_24px_rgba(17,17,16,0.14)] transition-[background-color,color,transform,box-shadow] duration-200 hover:bg-accent hover:shadow-[0_12px_30px_rgba(255,77,46,0.2)] active:scale-[0.96] md:min-h-12 md:px-7 md:text-base"
-            >
-              {language === "fr" ? "Démarrer un projet" : "Start a project"}
-              <span
-                aria-hidden="true"
-                className="text-accent transition-[color,transform] duration-200 group-hover:translate-x-1 group-hover:text-white"
-              >
-                →
-              </span>
-            </a>
-          </span>
-        </div>
       </div>
     </section>
   );
