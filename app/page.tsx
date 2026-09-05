@@ -27,10 +27,12 @@ function Section({
 export default function Home() {
   return (
     <>
-      <HeroSection />
-      <Section id="qui-suis-je" bg="bg-surface">
-        <Presentation />
-      </Section>
+      <div className="bg-[#1c1c1c]">
+        <HeroSection />
+        <Section id="qui-suis-je" bg="presentation-dark relative z-10 bg-[#1c1c1c]">
+          <Presentation />
+        </Section>
+      </div>
 
       <section id="projets" className="bg-canvas">
         <Projects />

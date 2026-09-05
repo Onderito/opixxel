@@ -106,3 +106,16 @@
   background: color-mix(in srgb, var(--accent) 22%, white);
   color: var(--text-title);
 }
+
+.presentation-dark {
+  --text-title: #f5f4f0;
+  --text-body: #b9b8b4;
+  --text-label: #999994;
+  color-scheme: dark;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-transition {
+    background: var(--bg-canvas);
+  }
+}

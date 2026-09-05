@@ -66,7 +66,22 @@ export function useHeroReveal({
 
     timeline.to(leftCopyElement, { autoAlpha: 1, x: 0, duration: 0.8 }, "contentReveal");
 
+    // Recompute the reel endpoint when responsive typography changes size.
+    const resizeObserver = new ResizeObserver(() => {
+      if (timeline.progress() < 1) {
+        timeline.invalidate();
+        return;
+      }
+      reelElements.forEach((element) => {
+        gsap.set(element, { y: getFinalOffset(element) });
+      });
+    });
+    reelElements.forEach((element) => {
+      if (element.firstElementChild) resizeObserver.observe(element.firstElementChild);
+    });
+
     return () => {
+      resizeObserver.disconnect();
       timeline.kill();
       gsap.set(
         [leftCopyElement, rightCopyElement, ...reelElements],

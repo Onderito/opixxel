@@ -2,6 +2,7 @@
 
 import { useHeroReveal } from "@/animation-gsap/use-hero-reveal";
 import { useHeroMotionRefs } from "@/animation-gsap/use-hero-motion-refs";
+import { useHeroTransition } from "@/animation-gsap/use-hero-transition";
 import { OWithEyes } from "@/components/o-with-eyes";
 import { useLanguage } from "@/app/ui/language-context";
 
@@ -56,14 +57,40 @@ const secondReel = [
   "x",
 ];
 
+function XReel({ letters }: { letters: readonly string[] }) {
+  return (
+    <span className="relative inline-flex translate-y-[0.10em] italic leading-none text-accent sm:translate-y-[0.06em]">
+      <span className="relative -mx-[0.025em] inline-flex h-[0.88em] w-[0.5em] overflow-x-visible overflow-y-hidden px-[0.04em] sm:w-[0.52em] md:w-[0.54em]">
+        <span
+          data-xx-reel
+          className="absolute left-0 top-0 flex w-full flex-col items-center"
+        >
+          {letters.map((letter, index) => (
+            <span
+              key={`${letter}-${index}`}
+              className="flex h-[0.88em] items-center justify-center leading-none"
+            >
+              {letter}
+            </span>
+          ))}
+        </span>
+      </span>
+    </span>
+  );
+}
+
 export default function HeroSection() {
   const { language } = useLanguage();
   const text = copy[language];
   const { leftCopyRef, rightCopyRef, titleRef } = useHeroMotionRefs();
   useHeroReveal({ leftCopyRef, rightCopyRef, titleRef });
+  const sectionRef = useHeroTransition();
   return (
-    <section className="relative min-h-screen overflow-hidden bg-canvas">
+    <section ref={sectionRef} className="hero-transition pointer-events-none relative z-20 min-h-svh overflow-hidden">
+      <div aria-hidden="true" data-hero-curtain className="absolute inset-y-0 left-0 w-1/2 bg-canvas" />
+      <div aria-hidden="true" data-hero-curtain className="absolute inset-y-0 right-0 w-1/2 bg-canvas" />
       <span
+        data-hero-secondary
         className="pointer-events-none absolute right-[11%] top-[16%] hidden h-44 w-44 opacity-50 md:block"
         aria-hidden="true"
       >
@@ -71,6 +98,7 @@ export default function HeroSection() {
         <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-accent/15" />
       </span>
       <span
+        data-hero-secondary
         className="pointer-events-none absolute bottom-[25%] left-2 h-28 w-28 opacity-50 md:bottom-[18%] md:left-[14%] md:h-44 md:w-44"
         aria-hidden="true"
       >
@@ -78,47 +106,25 @@ export default function HeroSection() {
         <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-accent/15" />
       </span>
 
-      <div className="relative z-10 min-h-screen px-6 py-6 md:px-12 md:py-10">
+      <div className="relative z-10 min-h-svh px-6 py-6 md:px-12 md:py-10">
         <div className="pointer-events-none absolute inset-x-0 top-1/2 z-0 -translate-y-1/2 px-6 md:px-12">
           <div className="flex justify-center">
             <h1
               ref={titleRef}
               className="font-bold text-center font-bricolage text-[5.1rem] leading-[0.88] tracking-[-0.05em] text-title sm:text-[7.2rem] md:text-[9.5rem] lg:text-[11.5rem] xl:text-[150px]"
+              aria-label="Öpixxel"
             >
-              <OWithEyes />
-              pi
-              <span
-                className="relative inline-flex translate-y-[0.10em] sm:translate-y-[0.06em] italic leading-none text-accent overflow-hidden"
-                aria-label="xx"
-                role="text"
-              >
-                {[firstReel, secondReel].map((letters, index) => (
-                  <span
-                    key={index}
-                    className="relative -mx-[0.025em] inline-flex h-[0.88em] w-[0.5em] overflow-x-visible overflow-y-hidden px-[0.04em] sm:w-[0.52em] md:w-[0.54em]"
-                  >
-                    <span
-                      data-xx-reel
-                      className="absolute left-0 top-0 flex w-full flex-col items-center"
-                    >
-                      {letters.map((letter, letterIndex) => (
-                        <span
-                          key={`${letter}-${letterIndex}`}
-                          className="flex h-[0.88em] items-center justify-center leading-none"
-                        >
-                          {letter}
-                        </span>
-                      ))}
-                    </span>
-                  </span>
-                ))}
+              <span data-hero-half aria-hidden="true" className="inline-block will-change-transform">
+                <OWithEyes />pi<XReel letters={firstReel} />
               </span>
-              el
+              <span data-hero-half aria-hidden="true" className="inline-block will-change-transform">
+                <XReel letters={secondReel} />el
+              </span>
             </h1>
           </div>
         </div>
 
-        <div className="absolute inset-x-0 bottom-6 z-10 flex flex-col gap-6 px-6 text-body md:bottom-10 md:px-12 xl:flex-row xl:items-end xl:justify-between">
+        <div data-hero-secondary className="absolute inset-x-0 bottom-6 z-10 flex flex-col gap-6 px-6 text-body md:bottom-10 md:px-12 xl:flex-row xl:items-end xl:justify-between">
           <p
             ref={leftCopyRef}
             className="w-full font-light max-w-none text-[1.05rem] leading-[1.35] sm:max-w-[18ch] md:max-w-[24ch] md:text-[1.15rem] xl:max-w-[34ch]"
