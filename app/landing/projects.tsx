@@ -275,11 +275,6 @@ export default function Projects() {
       }
       onMouseMove={handleMouseMove}
       onMouseLeave={handleLeave}
-      onClick={() => {
-        if ("internal" in project && project.internal) {
-          window.scrollTo(0, 0);
-        }
-      }}
     >
       <div
         className="flex items-center justify-between gap-4 py-6 font-manrope transition-opacity duration-300"

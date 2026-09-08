@@ -14,7 +14,7 @@ const sections = [
       "**Ulas Onder**",
       "Activité : Développeur web freelance",
       "Adresse : Paris, France",
-      "Contact : via [Calendly](https://calendly.com/ulas-onder/30min)",
+      "Contact : via [Calendly](https://calendly.com/ulas-onder07/30min)",
       "SIRET : en cours d'immatriculation",
     ],
   },

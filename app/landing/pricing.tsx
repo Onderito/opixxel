@@ -101,72 +101,58 @@ function CornerBlob() {
 
 const plansByLanguage = {
   fr: [
-  {
-    id: "landing",
-    title: "Landing page",
-    description:
-      "Une page qui capte, convainc et convertit. Je m'occupe de tout, du premier pixel au dernier keyframe.",
-    price: "1.500€",
-    features: [
-      "Design sur mesure",
-      "Animations GSAP intentionnelles",
-      "Responsive & optimisé mobile",
-      "Livraison en 2 semaines",
-      "2 Révisions incluses jusqu'à validation",
-    ],
-    cta: "Réserver un appel →",
-    ctaWidth: 144,
-    dark: false,
-    titleBordered: false,
-  },
-  {
-    id: "complet",
-    title: "Site complet",
-    description:
-      "Ton identité digitale complète. Un site qui raconte une histoire à chaque scroll et donne envie de rester.",
-    price: "3.500€",
-    features: [
-      "Jusqu'à 6 pages",
-      "Maquettes Figma livrées",
-      "Scroll storytelling",
-      "Transitions de page fluides",
-      "Livraison en 2-3 semaines",
-    ],
-    cta: "Réserver un appel →",
-    ctaWidth: 144,
-    dark: true,
-    titleBordered: true,
-  },
-  {
-    id: "mesure",
-    title: "Mission sur mesure",
-    description:
-      "T'as un projet complexe, une stack existante, ou une agence derrière toi. On définit ensemble ce dont t'as besoin.",
-    price: "Sur devis",
-    features: [
-      "Composants GSAP isolés",
-      "Intégration stack existante",
-      "Sous-traitance agence",
-      "TJM disponible sur demande",
-    ],
-    cta: "Discutons en →",
-    ctaWidth: 113,
-    dark: false,
-    titleBordered: false,
-  },
+    {
+      id: "refonte",
+      title: "Refonte Shopify",
+      description:
+        "Ta boutique fonctionne. Il est temps qu'elle reflète vraiment ta marque. Je repense son design et son expérience d'achat pour créer un univers sur mesure, à la hauteur de tes produits.",
+      pricePrefix: "À partir de",
+      price: "3 500 €",
+      features: [
+        "Design sur mesure, adapté à ta marque",
+        "Refonte des pages clés de ta boutique",
+        "Navigation et expérience mobile repensées",
+        "Catalogue et configuration existants conservés",
+        "2 séries de retours incluses",
+      ],
+      cta: "Réserver un appel →",
+      ctaWidth: 144,
+      dark: false,
+      titleBordered: false,
+    },
+    {
+      id: "creation",
+      title: "Création Shopify",
+      description:
+        "Ta marque mérite une boutique à son image. Je crée ton univers sur mesure et configure ta boutique Shopify pour accueillir tes premières commandes.",
+      pricePrefix: "",
+      price: "Tarif à définir",
+      features: [
+        "Design sur mesure, adapté à ta marque",
+        "Création des pages clés de ta boutique",
+        "Configuration des paiements et livraisons",
+        "Intégration du catalogue de départ",
+        "Prise en main pour gérer ta boutique",
+      ],
+      cta: "Réserver un appel →",
+      ctaWidth: 144,
+      dark: true,
+      titleBordered: true,
+    },
   ],
   en: [
     {
-      id: "landing",
-      title: "Landing page",
+      id: "refonte",
+      title: "Shopify redesign",
       description:
-        "A page that captures attention, persuades, and converts. I handle everything, from the first pixel to the last keyframe.",
-      price: "€1,500",
+        "Your store is up and running. Now let it truly reflect your brand. I rethink its design and shopping experience to create a bespoke store worthy of your products.",
+      pricePrefix: "Starting at",
+      price: "€3,500",
       features: [
-        "Bespoke design",
-        "Purposeful GSAP animations",
-        "Responsive and mobile-optimized",
-        "Delivery in 2 weeks",
+        "Bespoke design tailored to your brand",
+        "Redesign of your store’s key pages",
+        "Rethought navigation and mobile experience",
+        "Existing catalog and configuration preserved",
         "2 revision rounds included",
       ],
       cta: "Book a call →",
@@ -175,39 +161,23 @@ const plansByLanguage = {
       titleBordered: false,
     },
     {
-      id: "complet",
-      title: "Complete website",
+      id: "creation",
+      title: "Shopify creation",
       description:
-        "Your complete digital identity. A website that tells a story with every scroll and makes people want to stay.",
-      price: "€3,500",
+        "Your brand deserves a store of its own. I create a bespoke design and set up your Shopify store to welcome your first orders.",
+      pricePrefix: "",
+      price: "Pricing to be defined",
       features: [
-        "Up to 6 pages",
-        "Figma designs included",
-        "Scroll storytelling",
-        "Smooth page transitions",
-        "Delivery in 2–3 weeks",
+        "Bespoke design tailored to your brand",
+        "Creation of your store’s key pages",
+        "Payment and shipping setup",
+        "Initial product catalog integration",
+        "Training to manage your store",
       ],
       cta: "Book a call →",
       ctaWidth: 108,
       dark: true,
       titleBordered: true,
-    },
-    {
-      id: "mesure",
-      title: "Custom project",
-      description:
-        "Have a complex project, an existing stack, or an agency behind you? We define exactly what you need together.",
-      price: "On request",
-      features: [
-        "Standalone GSAP components",
-        "Existing stack integration",
-        "Agency subcontracting",
-        "Day rate available on request",
-      ],
-      cta: "Let's talk →",
-      ctaWidth: 88,
-      dark: false,
-      titleBordered: false,
     },
   ],
 } as const;
@@ -221,6 +191,7 @@ function PricingCard({ plan }: { plan: Plan }) {
     title,
     description,
     price,
+    pricePrefix,
     features,
     cta,
     ctaWidth,
@@ -273,15 +244,20 @@ function PricingCard({ plan }: { plan: Plan }) {
           </div>
 
           {/* Prix */}
+          <div className="flex flex-col gap-2">
+          <span className={`font-manrope text-sm min-h-5 ${dark ? "text-[#a4a4a4]" : "text-body"}`}>
+            {pricePrefix}
+          </span>
           <p
             data-pricing-price
             data-value={price}
-            className={`font-bricolage font-semibold text-[40px] tracking-[-0.02em] leading-none ${
+            className={`font-bricolage font-semibold text-[32px] lg:text-[40px] tracking-[-0.02em] leading-none ${
               dark ? "text-white" : "text-title"
             }`}
           >
             {price}
           </p>
+          </div>
         </div>
 
         {/* Features */}
@@ -304,7 +280,7 @@ function PricingCard({ plan }: { plan: Plan }) {
       {/* ── CTA bas droite ── */}
       <div data-pc-cta className="mt-auto pt-8 flex flex-col items-end gap-0.5">
         <a
-          href="https://calendly.com/ulas-onder/30min"
+          href="https://calendly.com/ulas-onder07/30min"
           target="_blank"
           rel="noopener noreferrer"
           className={`font-manrope text-base tracking-[-0.02em] hover:text-accent transition-colors duration-200 ${
@@ -318,7 +294,7 @@ function PricingCard({ plan }: { plan: Plan }) {
 
       {/* ── Blob déco coin bas gauche (cards claires uniquement) ── */}
       {!dark && (
-        <div className="absolute -bottom-3 -left-2 pointer-events-none select-none">
+        <div className="absolute -bottom-3 -left-2 hidden lg:block pointer-events-none select-none">
           <CornerBlob />
         </div>
       )}
@@ -354,10 +330,27 @@ export default function Pricing() {
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-[45px] mt-8 md:mt-[166px]">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-[45px] max-w-[1200px] mx-auto mt-8 md:mt-[166px]">
         {plans.map((plan) => (
           <PricingCard key={plan.id} plan={plan} />
         ))}
+      </div>
+      <div className="max-w-[1200px] mx-auto mt-7 flex flex-col gap-3 font-manrope text-sm text-[#a4a4a4]">
+        <p>
+          {language === "fr"
+            ? "Abonnement Shopify et éventuelles applications payantes non inclus. Les pages et le volume du catalogue sont définis ensemble ; la conservation de l’existant dépend de son état."
+            : "Shopify subscription and any paid apps are not included. Pages and catalog size are agreed together; preserving the existing setup depends on its condition."}
+        </p>
+        <a
+          href="https://calendly.com/ulas-onder07/30min"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex min-h-11 items-center self-start text-white underline decoration-accent underline-offset-4 hover:text-accent transition-colors"
+        >
+          {language === "fr"
+            ? "Un projet de site vitrine ? Parlons-en →"
+            : "Need a business website? Let’s talk →"}
+        </a>
       </div>
     </div>
   );

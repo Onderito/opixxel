@@ -78,13 +78,13 @@ export default function Footer() {
         { label: "Réalisations", href: "#projets" },
         { label: "La méthode", href: "#methode" },
         { label: "Tarifs", href: "#offres" },
-        { label: "Contact", href: "https://calendly.com/ulas-onder/30min" },
+        { label: "Contact", href: "https://calendly.com/ulas-onder07/30min" },
       ]
     : [
         { label: "Work", href: "#projets" },
         { label: "Process", href: "#methode" },
         { label: "Services", href: "#offres" },
-        { label: "Contact", href: "https://calendly.com/ulas-onder/30min" },
+        { label: "Contact", href: "https://calendly.com/ulas-onder07/30min" },
       ];
   const meta = language === "fr"
     ? [
@@ -178,7 +178,7 @@ export default function Footer() {
           <div data-footer-col className="flex flex-col shrink-0">
             <div className="flex flex-col w-fit">
               <a
-                href="https://calendly.com/ulas-onder/30min"
+                href="https://calendly.com/ulas-onder07/30min"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-manrope font-bold text-[20px] text-accent leading-normal hover:opacity-80 transition-opacity duration-200 cursor-pointer whitespace-nowrap"

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Lenis from "lenis";
+import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -9,6 +10,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const useLenis = () => {
   const lenisRef = useRef<Lenis | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     lenisRef.current = new Lenis({
@@ -27,18 +29,29 @@ const useLenis = () => {
     // différents → jank sur toutes les animations scrub.
     lenisRef.current.on("scroll", ScrollTrigger.update);
 
-    gsap.ticker.add((time) => {
+    const tick = (time: number) => {
       lenisRef.current?.raf(time * 1000);
-    });
+    };
+    gsap.ticker.add(tick);
 
     // Supprime le lag smoothing de GSAP — Lenis s'en charge
     gsap.ticker.lagSmoothing(0);
 
     return () => {
+      gsap.ticker.remove(tick);
       lenisRef.current?.destroy();
       lenisRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    if (pathname !== "/projets/sbcare" || window.location.hash) return;
+
+    // Reset the smooth-scroll target after the destination has mounted.
+    // A native scrollTo alone leaves an in-flight Lenis animation running.
+    lenisRef.current?.resize();
+    lenisRef.current?.scrollTo(0, { immediate: true, force: true });
+  }, [pathname]);
 
   return lenisRef;
 };

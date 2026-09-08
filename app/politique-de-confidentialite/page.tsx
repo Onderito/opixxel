@@ -12,7 +12,7 @@ const sections = [
     title: "1. Responsable du traitement",
     content: [
       "**Ulas Onder** (Öpixxel) — Paris, France",
-      "Contact : via [Calendly](https://calendly.com/ulas-onder/30min)",
+      "Contact : via [Calendly](https://calendly.com/ulas-onder07/30min)",
     ],
   },
   {
@@ -54,7 +54,7 @@ const sections = [
       "— **Droit à l'effacement** : demander la suppression de vos données.",
       "— **Droit d'opposition** : vous opposer à un traitement.",
       "— **Droit à la portabilité** : recevoir vos données dans un format structuré.",
-      "Pour exercer ces droits, contactez-nous via [Calendly](https://calendly.com/ulas-onder/30min) ou par e-mail. Vous pouvez également introduire une réclamation auprès de la **CNIL** (cnil.fr).",
+      "Pour exercer ces droits, contactez-nous via [Calendly](https://calendly.com/ulas-onder07/30min) ou par e-mail. Vous pouvez également introduire une réclamation auprès de la **CNIL** (cnil.fr).",
     ],
   },
   {

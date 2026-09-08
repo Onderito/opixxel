@@ -116,7 +116,7 @@ export default function SiteNavbar() {
         </div>
 
         <a
-          href="https://calendly.com/ulas-onder/30min"
+          href="https://calendly.com/ulas-onder07/30min"
           target="_blank"
           rel="noopener noreferrer"
           aria-label={text.cta}

@@ -1,8 +1,5 @@
 import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 // "1.500€" → 1500 | "€1,500" → 1500 | "Sur devis" → null
 function parsePrice(raw: string): number | null {
@@ -29,33 +26,50 @@ export function usePricingScroll(refreshKey: string) {
     if (!section) return;
 
     const mm = gsap.matchMedia();
+    // A reveal only needs viewport visibility, not ScrollTrigger's shared
+    // refresh cycle (which may remove completed triggers while iterating).
+    const observeReveal = (animation: gsap.core.Animation, bottomMargin: string) => {
+      const observer = new IntersectionObserver((entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          animation.play();
+          observer.disconnect();
+        }
+      }, { rootMargin: `0px 0px ${bottomMargin} 0px` });
+      observer.observe(section);
+      return observer;
+    };
 
     // ── Mobile (< 768px) — animation légère, pas de compteur ─────────────
     mm.add("(max-width: 767px)", () => {
+      let observer: IntersectionObserver | undefined;
       const ctx = gsap.context(() => {
         const cards = gsap.utils.toArray<HTMLElement>("[data-pricing-card]", section);
 
         gsap.set(cards, { opacity: 0, y: 40 });
-        gsap.to(cards, {
+        const reveal = gsap.to(cards, {
+          paused: true,
           opacity: 1,
           y: 0,
           duration: 0.6,
           ease: "power3.out",
           stagger: 0.12,
-          scrollTrigger: { trigger: section, start: "top 80%", once: true },
+
         });
+        observer = observeReveal(reveal, "-20%");
       }, sectionRef);
 
-      return () => ctx.revert();
+      return () => {
+        observer?.disconnect();
+        ctx.revert();
+      };
     });
 
     // ── Desktop (≥ 768px) — animation complète avec compteur ─────────────
     mm.add("(min-width: 768px)", () => {
       const cardTimelines: gsap.core.Timeline[] = [];
+      let observer: IntersectionObserver | undefined;
       const ctx = gsap.context(() => {
         const cards = gsap.utils.toArray<HTMLElement>("[data-pricing-card]", section);
-
-        const ST = { trigger: section, start: "top 68%", once: true };
 
         gsap.set(cards, { opacity: 0, y: 50 });
         cards.forEach((card) => {
@@ -67,13 +81,13 @@ export function usePricingScroll(refreshKey: string) {
           gsap.set([title, desc, features, price, cta], { opacity: 0, y: 18 });
         });
 
-        gsap.to(cards, {
+        const reveal = gsap.to(cards, {
+          paused: true,
           opacity: 1,
           y: 0,
           duration: 0.75,
           ease: "power3.out",
           stagger: 0.18,
-          scrollTrigger: ST,
           onStart() {
             cards.forEach((card, i) => {
               const cardDelay = i * 0.18;
@@ -114,11 +128,16 @@ export function usePricingScroll(refreshKey: string) {
             });
           },
         });
+        observer = observeReveal(reveal, "-32%");
       }, sectionRef);
 
       return () => {
+        observer?.disconnect();
         cardTimelines.forEach((timeline) => timeline.kill());
         ctx.revert();
+        section.querySelectorAll<HTMLElement>("[data-pricing-price]").forEach((price) => {
+          price.textContent = price.dataset.value ?? "";
+        });
       };
     });
 

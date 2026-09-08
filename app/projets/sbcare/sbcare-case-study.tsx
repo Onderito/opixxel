@@ -135,12 +135,6 @@ export default function SbcareCaseStudy() {
   };
 
   useLayoutEffect(() => {
-    // Lenis persiste entre les routes : réinitialiser sa position native au
-    // montage garantit que le case study commence toujours tout en haut.
-    window.scrollTo(0, 0);
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-
     const page = pageRef.current;
     if (!page) return;
 
