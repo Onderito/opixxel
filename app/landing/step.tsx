@@ -1,288 +1,171 @@
 "use client";
 
-import { ClipboardIllustration } from "@/components/illustrations/clipboard";
-import { WireframeIllustration } from "@/components/illustrations/wireframe";
-import { RocketIllustration } from "@/components/illustrations/rocket";
-import { useStepScroll } from "@/animation-gsap/use-step-scroll";
-import { useTextReveal } from "@/animation-gsap/use-text-reveal";
+import Image from "next/image";
 import { useLanguage } from "@/app/ui/language-context";
-
-// ── Sous-composants ────────────────────────────────────────────────────────────
-
-function CornerMarks() {
-  return (
-    <>
-      <span className="absolute top-3 left-3 w-3 h-3 border-t border-l border-stroke" />
-      <span className="absolute top-3 right-3 w-3 h-3 border-t border-r border-stroke" />
-      <span className="absolute bottom-3 left-3 w-3 h-3 border-b border-l border-stroke" />
-      <span className="absolute bottom-3 right-3 w-3 h-3 border-b border-r border-stroke" />
-    </>
-  );
-}
-
-function PlusAccent() {
-  return (
-    <svg
-      width="32"
-      height="32"
-      viewBox="-16 -16 32 32"
-      fill="none"
-      className="absolute top-6 right-6 opacity-20 pointer-events-none"
-      aria-hidden
-    >
-      <line
-        x1="-16"
-        y1="0"
-        x2="16"
-        y2="0"
-        stroke="var(--accent)"
-        strokeWidth="1"
-      />
-      <line
-        x1="0"
-        y1="-16"
-        x2="0"
-        y2="16"
-        stroke="var(--accent)"
-        strokeWidth="1"
-      />
-    </svg>
-  );
-}
-
-function StepCard({
-  number,
-  title,
-  description,
-  chip,
-}: {
-  number: string;
-  title: string;
-  description: React.ReactNode;
-  chip: string;
-}) {
-  return (
-    <div
-      data-step-card
-      className="relative flex flex-col items-center justify-center gap-4 bg-canvas/55 backdrop-blur-[1.5px] border border-stroke rounded-sm px-8 py-12 text-center w-full min-h-[360px] xl:w-[413px] xl:h-[539px] xl:min-h-0"
-    >
-      <CornerMarks />
-      <PlusAccent />
-
-      <div className="flex flex-col items-center gap-[10px]">
-        <p className="font-manrope font-light text-accent text-xl tracking-tight">
-          {number}
-        </p>
-        <div className="flex flex-col items-center gap-[4px]">
-          <h3 className="font-manrope font-normal text-title heading-3 tracking-tight leading-none">
-            {title}
-          </h3>
-          <p className="font-manrope font-light text-body tracking-[-0.02em] max-w-[30ch]">
-            {description}
-          </p>
-        </div>
-      </div>
-
-      <div className="flex items-center justify-center border border-stroke bg-white rounded-sm px-3 h-[30px]">
-        <span className="font-manrope font-normal text-label text-sm tracking-tight whitespace-nowrap">
-          {chip}
-        </span>
-      </div>
-    </div>
-  );
-}
-function Arrow({ direction }: { direction: "right" | "left" }) {
-  const line =
-    direction === "right" ? "M 15 15 L 165 105" : "M 165 15 L 15 105";
-  const head =
-    direction === "right"
-      ? "M 151 100 L 165 105 L 158 91"
-      : "M 29 100 L 15 105 L 22 91";
-
-  return (
-    <svg
-      data-step-arrow
-      width="180"
-      height="120"
-      viewBox="0 0 180 120"
-      fill="none"
-      className="overflow-visible"
-      aria-hidden
-    >
-      <path
-        data-arrow-line
-        d={line}
-        stroke="var(--accent)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-      <path
-        data-arrow-head
-        d={head}
-        stroke="var(--accent)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-// ── Data ───────────────────────────────────────────────────────────────────────
+import { useStepScroll } from "@/animation-gsap/use-step-scroll";
 
 const stepsByLanguage = {
   fr: [
-  {
-    number: "01",
-    title: "On cadre",
-    description:
-      "Un appel de 30 min. Tu m'expliques ton projet, tes contraintes, ce que tu veux ressentir en scrollant.",
-    chip: "30 min",
-  },
-  {
-    number: "02",
-    title: "Je design et je code",
-    description:
-      "Maquette Figma d'abord. Tu valides. Ensuite je code, j'anime, je peaufine chaque détail.",
-    chip: "1 à 3 semaines",
-  },
-  {
-    number: "03",
-    title: "Tu lances",
-    description: (
-      <>
-        Je te livre un site propre, performant, prêt à être mis en ligne. Tu
-        repars
-        <span className="hidden xl:inline">
-          <br />
-        </span>
-        avec les clés.
-      </>
-    ),
-    chip: "livraison",
-  },
+    {
+      number: "01",
+      title: "On parle de ta boutique",
+      description:
+        "Tu me présentes ta marque, tes produits et ton projet. Ensemble, on pose les pages, les priorités et le budget.",
+      image: "/images/method/step-01-refined.png",
+      alt: "Deux formes sculpturales se rencontrent autour d’un accent orange",
+    },
+    {
+      number: "02",
+      title: "Je maquette, puis je développe",
+      description:
+        "Tu valides le design. Je construis ensuite une interface sur mesure, pensée pour tes produits et reliée à Shopify.",
+      image: "/images/method/step-02-refined.png",
+      alt: "Une composition de matières et de grilles en cours d’assemblage",
+    },
+    {
+      number: "03",
+      title: "Ta boutique prend vie",
+      description:
+        "On vérifie le parcours d’achat avant la mise en ligne. Puis je te montre comment gérer ta boutique au quotidien.",
+      image: "/images/method/step-03-refined.png",
+      alt: "Une architecture abstraite achevée, éclairée d’une lumière orange",
+    },
   ],
   en: [
     {
       number: "01",
-      title: "We define it",
+      title: "We talk about your store",
       description:
-        "A 30-minute call. You tell me about your project, constraints, and how the experience should feel.",
-      chip: "30 min",
+        "You introduce me to your brand, products and project. Together, we define the pages, priorities and budget.",
+      image: "/images/method/step-01-refined.png",
+      alt: "Two sculptural forms meeting around an orange accent",
     },
     {
       number: "02",
-      title: "I design and build",
+      title: "I create the mockups, then develop",
       description:
-        "Figma first. You approve it. Then I code, animate, and refine every detail.",
-      chip: "1 to 3 weeks",
+        "You approve the design. I then build a custom interface, tailored to your products and connected to Shopify.",
+      image: "/images/method/step-02-refined.png",
+      alt: "A composition of materials and grids being assembled",
     },
     {
       number: "03",
-      title: "You launch",
+      title: "Your store comes to life",
       description:
-        "I deliver a clean, high-performance website, ready to go live. You leave with the keys.",
-      chip: "delivery",
+        "We check the shopping journey before launch. Then I show you how to manage your store day to day.",
+      image: "/images/method/step-03-refined.png",
+      alt: "A completed abstract structure illuminated by an orange light",
     },
   ],
-};
-
-// ── Section ────────────────────────────────────────────────────────────────────
+} as const;
 
 export default function Step() {
   const { language } = useLanguage();
+  const { sectionRef } = useStepScroll(language);
   const steps = stepsByLanguage[language];
-  const { sectionRef } = useStepScroll();
-  const { ref: headerRef } = useTextReveal();
 
   return (
-    <div ref={sectionRef} className="relative isolate">
-      {/* Fond quadrillé « plan technique » — lignes dans les gris chauds de
-          la DA (label mélangé à transparent), estompé sur les bords par un
-          masque radial. `isolate` sur le parent crée un stacking context :
-          sans lui, le -z-10 passerait derrière le bg-surface de la section. */}
+    <div ref={sectionRef} className="relative bg-[#e9ddcc]" data-method-root>
       <div
-        aria-hidden
-        className="absolute -inset-x-4 -inset-y-10 -z-10 pointer-events-none
-          bg-[linear-gradient(to_right,color-mix(in_srgb,var(--text-label)_28%,transparent)_1px,transparent_1px),linear-gradient(to_bottom,color-mix(in_srgb,var(--text-label)_28%,transparent)_1px,transparent_1px)]
-          bg-[size:56px_56px]
-          [mask-image:radial-gradient(ellipse_75%_65%_at_50%_45%,black_25%,transparent_78%)]"
-      />
-
-      <div ref={headerRef} className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <span data-eyebrow className="text-accent text-xs md:text-sm tracking-wide font-medium">
-          {language === "fr" ? "// de ton idée à ton site" : "// from idea to website"}
-        </span>
-        <h2 data-heading className="font-bricolage heading-2 text-title">
-          {language === "fr" ? "Rien de compliqué." : "Nothing complicated."}
-        </h2>
-      </div>
-
-      {/* Mobile + md ─ grille simple */}
-      <div className="grid grid-cols-1 md:grid-cols-3 xl:hidden gap-6 mt-10">
-        {steps.map((step) => (
-          <StepCard key={step.number} {...step} />
-        ))}
-      </div>
-
-      {/* CTA mobile + md */}
-      <div data-step-cta-mobile className="flex justify-center mt-14 xl:hidden opacity-0">
-        <a
-          href="https://calendly.com/ulas-onder07/30min"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="relative font-bricolage italic text-title text-4xl md:text-5xl hover:text-accent transition-colors duration-300 flex flex-col items-center gap-3"
-        >
-          {language === "fr" ? "→ On démarre ?" : "→ Shall we start?"}
-          <span
-            className="block w-full h-[2px] bg-accent origin-left scale-x-0"
-            data-cta-underline
-          />
-        </a>
-      </div>
-
-      {/* xl ─ layout alterné avec illustration + flèches */}
-      <div data-step-xl className="hidden xl:flex xl:flex-col mt-10">
-        {/* Étape 01 + Venn côte à côte */}
-        <div className="flex items-center justify-between">
-          <StepCard {...steps[0]} />
-          <ClipboardIllustration />
-        </div>
-
-        <div className="flex justify-center py-6">
-          <Arrow direction="right" />
-        </div>
-
-        {/* Étape 02 + Wireframe côte à côte */}
-        <div className="flex items-center justify-between">
-          <WireframeIllustration />
-          <StepCard {...steps[1]} />
-        </div>
-
-        <div className="flex justify-center py-6">
-          <Arrow direction="left" />
-        </div>
-
-        {/* Étape 03 + Rocket côte à côte */}
-        <div className="flex items-center  justify-between">
-          <StepCard {...steps[2]} />
-          <RocketIllustration />
-        </div>
-
-        <div data-step-cta className="flex justify-center mt-20 opacity-0">
-          <a
-            href="https://calendly.com/ulas-onder07/30min"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="relative font-bricolage italic text-title text-4xl md:text-5xl hover:text-accent transition-colors duration-300 flex flex-col items-center gap-3"
+        className="relative h-svh min-h-[560px] overflow-hidden motion-reduce:h-auto motion-reduce:overflow-visible"
+        data-method-stage
+      >
+        {steps.map((step, index) => (
+          <article
+            key={step.number}
+            data-method-panel
+            className="absolute inset-0 isolate overflow-hidden bg-[#e9ddcc] [backface-visibility:hidden] motion-reduce:relative motion-reduce:min-h-svh"
           >
-            {language === "fr" ? "→ On démarre ?" : "→ Shall we start?"}
-            <span
-              className="block w-full h-[2px] bg-accent origin-left scale-x-0"
-              data-cta-underline
+            <div className="absolute inset-x-0 top-0 h-[62%] md:inset-0 md:h-full">
+            <Image
+              src={step.image}
+              alt={step.alt}
+              fill
+              sizes="(max-width: 767px) 160vw, 100vw"
+              quality={90}
+              loading="eager"
+              fetchPriority={index === 0 ? "high" : "auto"}
+              className="object-cover object-[85%_center] md:object-center"
             />
-          </a>
-        </div>
+            </div>
+
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 bg-[linear-gradient(90deg,rgba(244,236,225,0.98)_0%,rgba(244,236,225,0.9)_25%,rgba(244,236,225,0.32)_49%,rgba(244,236,225,0)_70%)] max-md:bg-[linear-gradient(0deg,#e9ddcc_0%,#e9ddcc_35%,rgba(233,221,204,0.92)_43%,rgba(233,221,204,0)_62%)]"
+            />
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 ring-1 ring-inset ring-black/10"
+            />
+
+            <div className="relative z-10 flex h-full items-end px-6 pb-8 pt-24 sm:px-8 sm:pb-10 md:items-center md:px-12 md:pb-0 lg:px-[7vw]">
+              <div className="w-full text-title md:max-w-[540px]">
+                <div
+                  data-method-kicker
+                  className="mb-5 flex items-center gap-3 font-manrope text-[11px] font-medium uppercase tracking-[0.18em] md:mb-8 md:text-xs"
+                >
+                    <span className="text-accent">
+                    {language === "fr" ? "La méthode" : "The process"}
+                  </span>
+                  <span aria-hidden="true" className="h-px w-9 bg-current opacity-35" />
+                  <span className="opacity-70">{step.number} / 03</span>
+                </div>
+
+                <h2
+                  data-method-title
+                  className="max-w-[12ch] text-balance font-bricolage text-[clamp(2.5rem,8.8vw,4.5rem)] font-medium leading-[0.92] tracking-[-0.055em] md:text-[clamp(3.5rem,5.2vw,5.75rem)]"
+                >
+                  {step.title}
+                </h2>
+
+                <p
+                  data-method-description
+                  className="mt-5 max-w-[37ch] text-pretty font-manrope text-sm font-light leading-[1.55] opacity-85 sm:text-[15px] md:mt-8 md:text-base md:leading-[1.6]"
+                >
+                  {step.description}
+                </p>
+
+                {index === steps.length - 1 && (
+                  <a
+                    data-method-cta
+                    href="https://calendly.com/ulas-onder07/30min"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-7 inline-flex min-h-11 items-center border-b border-current pb-1 font-bricolage text-2xl italic tracking-[-0.04em] transition-colors duration-200 hover:text-accent md:mt-10 md:text-4xl"
+                  >
+                    {language === "fr" ? "→ On démarre ?" : "→ Shall we start?"}
+                  </a>
+                )}
+              </div>
+            </div>
+
+            <span
+              aria-hidden="true"
+              className="absolute right-6 top-6 z-10 hidden font-manrope text-[10px] uppercase tracking-[0.18em] text-title/45 sm:block md:right-12 md:top-10"
+            >
+              Öpixxel® — {step.number}
+            </span>
+          </article>
+        ))}
+        <aside
+          aria-label={language === "fr" ? "Progression des étapes" : "Step progress"}
+          className="pointer-events-none absolute right-6 top-24 z-30 font-manrope md:right-12 md:top-1/2 md:-translate-y-1/2 motion-reduce:hidden"
+        >
+          <ol className="flex flex-col gap-5">
+            {steps.map((step, index) => (
+              <li key={step.number} className="flex items-center justify-end gap-3">
+                <span data-method-marker-number className={`text-[11px] font-medium tabular-nums text-title ${index === 0 ? "opacity-100" : "opacity-45"}`}>
+                  <span className="sr-only">{language === "fr" ? "Étape " : "Step "}</span>
+                  {step.number}
+                </span>
+                <span className="relative h-[2px] w-8">
+                  <span aria-hidden="true" className="absolute inset-y-0 right-0 w-3 bg-title/25" />
+                  <span data-method-marker-bar aria-hidden="true" className={`absolute inset-0 origin-right bg-accent ${index === 0 ? "scale-x-100 opacity-100" : "scale-x-[0.375] opacity-0"}`} />
+                </span>
+              </li>
+            ))}
+          </ol>
+        </aside>
       </div>
     </div>
   );

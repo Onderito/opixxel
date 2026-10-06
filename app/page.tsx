@@ -38,9 +38,9 @@ export default function Home() {
         <Projects />
       </section>
 
-      <Section id="methode" bg="bg-surface">
+      <section id="methode" className="bg-surface">
         <Step />
-      </Section>
+      </section>
 
       <Section id="offres" bg="bg-[#222222]">
         <Pricing />

@@ -4,7 +4,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export function useStepScroll() {
+export function useStepScroll(refreshKey = "") {
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -13,251 +13,103 @@ export function useStepScroll() {
 
     const mm = gsap.matchMedia();
 
-    mm.add("(min-width: 1280px) and (prefers-reduced-motion: no-preference)", () => {
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
       const ctx = gsap.context(() => {
-
-        // ── Cards ──────────────────────────────────────────────
-        const xlLayout = section.querySelector("[data-step-xl]");
-        const cards = gsap.utils.toArray<HTMLElement>(
-          "[data-step-card]",
-          xlLayout ?? section,
+        const stage = section.querySelector<HTMLElement>("[data-method-stage]");
+        const panels = gsap.utils.toArray<HTMLElement>(
+          "[data-method-panel]",
+          section,
         );
-        cards.forEach((card, i) => {
-          const details = Array.from(card.children);
-          const fromX = i % 2 === 0 ? -28 : 28;
 
-          gsap.set(card, {
-            opacity: 0,
-            x: fromX,
-            y: 42,
-            scale: 0.985,
-            filter: "blur(6px)",
-            transformOrigin: "center bottom",
-          });
-          gsap.set(details, { opacity: 0, y: 14 });
+        if (!stage || panels.length < 2) return;
 
-          const tl = gsap.timeline({
-            scrollTrigger: {
-              trigger: card,
-              start: "top 82%",
-              once: true,
-            },
-          });
-          tl.to(card, {
-            opacity: 1,
-            x: 0,
-            y: 0,
-            scale: 1,
-            filter: "blur(0px)",
-            duration: 1.05,
-            ease: "power3.out",
-          });
-          tl.to(
-            details,
+        const incomingPanels = panels.slice(1);
+        const markerNumbers = gsap.utils.toArray<HTMLElement>("[data-method-marker-number]", section);
+        const markerBars = gsap.utils.toArray<HTMLElement>("[data-method-marker-bar]", section);
+
+        gsap.set(panels, { zIndex: (index) => index + 1 });
+        gsap.set(incomingPanels, {
+          yPercent: 100,
+          force3D: true,
+        });
+
+        panels.forEach((panel, index) => {
+          if (index === 0) return;
+          gsap.set(
+            panel.querySelectorAll(
+              "[data-method-kicker], [data-method-title], [data-method-description], [data-method-cta]",
+            ),
+            { y: 24, autoAlpha: 0 },
+          );
+        });
+
+        const timeline = gsap.timeline({
+          defaults: { ease: "none" },
+          scrollTrigger: {
+            trigger: stage,
+            start: "top top",
+            end: () => `+=${window.innerHeight * 1.7}`,
+            pin: true,
+            scrub: 0.4,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        incomingPanels.forEach((panel, index) => {
+          const at = index * 1.25;
+          const copy = panel.querySelectorAll(
+            "[data-method-kicker], [data-method-title], [data-method-description], [data-method-cta]",
+          );
+
+          timeline.to(markerBars[index], {
+            scaleX: 0.375, opacity: 0, duration: 0.5, ease: "power2.inOut",
+          }, at + 0.3);
+          timeline.to(markerBars[index + 1], {
+            scaleX: 1, opacity: 1, duration: 0.5, ease: "power2.inOut",
+          }, at + 0.3);
+          timeline.to(markerNumbers[index], {
+            opacity: 0.45, duration: 0.5, ease: "power2.inOut",
+          }, at + 0.3);
+          timeline.to(markerNumbers[index + 1], {
+            opacity: 1, duration: 0.5, ease: "power2.inOut",
+          }, at + 0.3);
+
+          timeline.to(
+            panel,
             {
-              opacity: 1,
-              y: 0,
-              duration: 0.55,
-              stagger: 0.07,
-              ease: "power2.out",
+              yPercent: 0,
+              force3D: true,
+              duration: 0.82,
+              ease: "power2.inOut",
             },
-            "-=0.58",
+            at,
           );
-        });
-
-        // ── Flèches ────────────────────────────────────────────
-        const arrows = gsap.utils.toArray<HTMLElement>("[data-step-arrow]", section);
-        arrows.forEach((arrow) => {
-          const line = arrow.querySelector<SVGPathElement>("[data-arrow-line]");
-          const head = arrow.querySelector<SVGPathElement>("[data-arrow-head]");
-          if (line)
-            gsap.set(line, {
-              strokeDasharray: line.getTotalLength(),
-              strokeDashoffset: line.getTotalLength(),
-            });
-          if (head) gsap.set(head, { opacity: 0 });
-          const tl = gsap.timeline({ scrollTrigger: { trigger: arrow, start: "top 88%" } });
-          if (line) tl.to(line, { strokeDashoffset: 0, duration: 0.4, ease: "power3.out" });
-          if (head) tl.to(head, { opacity: 1, duration: 0.15 }, "-=0.05");
-        });
-
-        // ── Clipboard ──────────────────────────────────────────
-        const clipboard = section.querySelector("[data-clipboard]");
-        if (clipboard) {
-          const body   = clipboard.querySelectorAll("[data-clip-body]");
-          const inner  = clipboard.querySelectorAll("[data-clip-inner]");
-          const check  = clipboard.querySelectorAll("[data-clip-check]");
-          const cta    = clipboard.querySelector("[data-clip-cta]");
-          const annots = clipboard.querySelectorAll("[data-clip-annotation]");
-          const decos  = clipboard.querySelectorAll("[data-clip-deco]");
-          const caption = clipboard.querySelector("[data-clip-caption]");
-
-          gsap.set([body, inner, check, cta, annots, decos, caption], { opacity: 0 });
-          gsap.set(body,  { y: 20 });
-          gsap.set(inner, { y: 8 });
-          gsap.set(check, { scale: 0, transformOrigin: "center" });
-          gsap.set(decos, { scale: 0, transformOrigin: "center" });
-
-          const tl = gsap.timeline({ scrollTrigger: { trigger: clipboard, start: "top 78%" } });
-
-          tl.to(body,  { opacity: 1, y: 0, duration: 0.45, ease: "back.out(1.6)", stagger: 0.06 });
-          tl.to(inner, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out", stagger: 0.04 }, "-=0.15");
-          tl.to(check, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2.5)", stagger: 0.05 }, "-=0.1");
-          tl.to(cta,   { opacity: 1, duration: 0.3, ease: "power2.out" }, "-=0.05");
-          tl.to(decos, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(2)", stagger: 0.04 }, "-=0.2");
-          tl.to(annots,{ opacity: 1, duration: 0.25, stagger: 0.08, ease: "power2.out" }, "-=0.1");
-          tl.to(caption,{ opacity: 1, duration: 0.3, ease: "power2.out" });
-        }
-
-        // ── Wireframe ──────────────────────────────────────────
-        const wire = section.querySelector("[data-wireframe]");
-        if (wire) {
-          const brackets  = wire.querySelectorAll<SVGPathElement>("[data-wire-bracket]");
-          const box       = wire.querySelector("[data-wire-box]");
-          const grid      = wire.querySelectorAll("[data-wire-grid]");
-          const inner     = wire.querySelectorAll("[data-wire-inner]");
-          const image     = wire.querySelector("[data-wire-image]");
-          const textLines = wire.querySelectorAll("[data-wire-text-line]");
-          const pill      = wire.querySelector("[data-wire-pill]");
-          const bottoms   = wire.querySelectorAll("[data-wire-bottom]");
-          const arrow     = wire.querySelectorAll("[data-wire-arrow]");
-          const labels    = wire.querySelectorAll("[data-wire-label]");
-          const caption   = wire.querySelector("[data-wire-caption]");
-
-          brackets.forEach((b) =>
-            gsap.set(b, { strokeDasharray: b.getTotalLength(), strokeDashoffset: b.getTotalLength() }),
-          );
-          gsap.set([box, grid, inner, image, textLines, pill, bottoms, arrow, labels, caption], { opacity: 0 });
-
-          const tl = gsap.timeline({ scrollTrigger: { trigger: wire, start: "top 78%" } });
-
-          tl.to(brackets,  { strokeDashoffset: 0, duration: 0.65, ease: "power3.inOut", stagger: 0 });
-          tl.to(labels,    { opacity: 1, duration: 0.2, stagger: 0.06, ease: "power2.out" }, "-=0.15");
-          tl.to(box,       { opacity: 1, duration: 0.25, ease: "power2.out" }, "-=0.05");
-          tl.to(grid,      { opacity: 1, duration: 0.2, stagger: 0.03, ease: "none" });
-          tl.to(inner,     { opacity: 1, duration: 0.18, stagger: 0.04, ease: "power2.out" });
-          tl.fromTo(image, { opacity: 0, x: -14 }, { opacity: 1, x: 0, duration: 0.3, ease: "power3.out" });
-          tl.to(textLines, { opacity: 1, duration: 0.14, stagger: 0.05, ease: "power2.out" }, "-=0.05");
-          tl.fromTo(pill,  { opacity: 0, scaleX: 0.5 }, { opacity: 1, scaleX: 1, duration: 0.28, ease: "back.out(2.5)" });
-          tl.to(bottoms,   { opacity: 1, duration: 0.18, stagger: 0.06, ease: "power2.out" });
-          tl.to(arrow,     { opacity: 1, duration: 0.18, stagger: 0.08, ease: "power2.out" });
-          tl.to(caption,   { opacity: 1, duration: 0.28, ease: "power2.out" });
-        }
-
-        // ── CTA ────────────────────────────────────────────────
-        const cta      = section.querySelector<HTMLElement>("[data-step-cta]");
-        const ctaUnder = section.querySelector<HTMLElement>("[data-cta-underline]");
-
-        if (cta && ctaUnder) {
-          gsap.set(ctaUnder, { scaleX: 0, transformOrigin: "left center" });
-
-          const tl = gsap.timeline({ scrollTrigger: { trigger: cta, start: "top 90%" } });
-          tl.fromTo(cta, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.65, ease: "back.out(1.6)" });
-          tl.to(ctaUnder, { scaleX: 1, duration: 0.5, ease: "power3.inOut" }, "-=0.3");
-        }
-
-        // ── Rocket ─────────────────────────────────────────────
-        const rocket = section.querySelector("[data-rocket]");
-        if (rocket) {
-          const body      = rocket.querySelectorAll("[data-rocket-body]");
-          const wings     = rocket.querySelectorAll("[data-rocket-wing]");
-          const porthole  = rocket.querySelector("[data-rocket-porthole]");
-          const flame     = rocket.querySelector("[data-rocket-flame]");
-          const decos     = rocket.querySelectorAll("[data-rocket-deco]");
-          const annotations = rocket.querySelectorAll("[data-rocket-annotation]");
-          const publish   = rocket.querySelectorAll("[data-rocket-publish]");
-
-          gsap.set([body, wings, porthole], { opacity: 0, y: 40 });
-          gsap.set(flame, { opacity: 0, scaleY: 0, transformOrigin: "top center" });
-          gsap.set(decos, { opacity: 0, scale: 0, transformOrigin: "center" });
-          gsap.set([annotations, publish], { opacity: 0 });
-
-          const tl = gsap.timeline({ scrollTrigger: { trigger: rocket, start: "top 78%" } });
-
-          tl.to([body, wings], { opacity: 1, y: 0, duration: 0.55, ease: "back.out(1.8)", stagger: 0.03 });
-          tl.to(porthole,  { opacity: 1, y: 0, duration: 0.3, ease: "back.out(2.5)" }, "-=0.2");
-          tl.to(flame,     { opacity: 1, scaleY: 1, duration: 0.4, ease: "back.out(3)" }, "-=0.1");
-          tl.to(flame,     { scaleY: 1.08, scaleX: 0.94, repeat: -1, yoyo: true, duration: 0.45, ease: "sine.inOut", transformOrigin: "top center" });
-          tl.to(decos,     { opacity: 1, scale: 1, duration: 0.28, stagger: 0.03, ease: "back.out(2.5)" }, "<-0.15");
-          tl.fromTo(publish, { opacity: 0, scale: 0.75 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2.5)", stagger: 0.04 }, "-=0.05");
-          tl.to(annotations, { opacity: 1, duration: 0.28, stagger: 0.08, ease: "power2.out" });
-        }
-
-      }, sectionRef);
-
-      return () => ctx.revert();
-    });
-
-    // ── Mobile + tablet (< 1280px) ─────────────────────────────
-    mm.add("(max-width: 1279px) and (prefers-reduced-motion: no-preference)", () => {
-      const ctx = gsap.context(() => {
-        const cards = gsap.utils.toArray<HTMLElement>("[data-step-card]", section);
-
-        cards.forEach((card) => {
-          const details = Array.from(card.children);
-          gsap.set(card, {
-            opacity: 0,
-            y: 28,
-            scale: 0.99,
-            filter: "blur(4px)",
-            transformOrigin: "center bottom",
-          });
-          gsap.set(details, { opacity: 0, y: 10 });
-
-          const tl = gsap.timeline({
-            scrollTrigger: {
-              trigger: card,
-              start: "top 88%",
-              once: true,
-            },
-          });
-          tl.to(card, {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            filter: "blur(0px)",
-            duration: 0.85,
-            ease: "power3.out",
-          });
-          tl.to(
-            details,
+          timeline.to(
+            copy,
             {
-              opacity: 1,
               y: 0,
-              duration: 0.45,
-              stagger: 0.06,
-              ease: "power2.out",
+              autoAlpha: 1,
+              duration: 0.42,
+              stagger: 0.08,
+              ease: "power3.out",
             },
-            "-=0.45",
+            at + 0.54,
           );
+          timeline.to({}, { duration: 0.43 });
         });
-
-        // ── CTA mobile ─────────────────────────────────────────
-        const cta      = section.querySelector<HTMLElement>("[data-step-cta-mobile]");
-        const ctaUnder = cta?.querySelector<HTMLElement>("[data-cta-underline]");
-
-        if (cta && ctaUnder) {
-          gsap.set(ctaUnder, { scaleX: 0, transformOrigin: "left center" });
-          const tl = gsap.timeline({ scrollTrigger: { trigger: cta, start: "top 90%" } });
-          tl.fromTo(cta, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.65, ease: "back.out(1.6)" });
-          tl.to(ctaUnder, { scaleX: 1, duration: 0.5, ease: "power3.inOut" }, "-=0.3");
-        }
-      }, sectionRef);
+      }, section);
 
       return () => ctx.revert();
     });
 
     mm.add("(prefers-reduced-motion: reduce)", () => {
-      gsap.set(
-        section.querySelectorAll(
-          "[data-step-card], [data-step-card] > *, [data-step-cta], [data-step-cta-mobile]",
-        ),
-        { opacity: 1, x: 0, y: 0, scale: 1, filter: "none" },
-      );
+      const panels = section.querySelectorAll<HTMLElement>("[data-method-panel]");
+      gsap.set(panels, { clearProps: "all" });
     });
 
     return () => mm.revert();
-  }, []);
+  }, [refreshKey]);
 
   return { sectionRef };
 }

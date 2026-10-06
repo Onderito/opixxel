@@ -98,7 +98,7 @@ function Clip({
 function Photo({ src, alt }: { src: string; alt: string }) {
   return (
     <span
-      className="relative inline-block shrink-0
+      className="relative inline-block shrink-0 overflow-hidden rounded-md
       w-[4.2rem] h-[1.4rem]
       sm:w-[5.4rem] sm:h-[1.85rem]
       md:w-[7.8rem] md:h-[2.7rem]
@@ -110,7 +110,9 @@ function Photo({ src, alt }: { src: string; alt: string }) {
         alt={alt}
         width={320}
         height={110}
-        className="absolute inset-0 w-full h-full object-cover rounded-md"
+        className={`absolute inset-0 w-full h-full object-cover ${
+          src === "/images/profil.webp" ? "scale-[1.04]" : ""
+        }`}
       />
     </span>
   );
@@ -230,6 +232,7 @@ export default function Presentation() {
         {rows.map((row, rowIndex) => (
           <div
             key={`${language}-${rowIndex}`}
+            data-presentation-row
             className="flex flex-wrap items-center justify-center gap-x-[0.15em]"
           >
             {row.map((entry, entryIndex) =>

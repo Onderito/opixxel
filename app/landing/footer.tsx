@@ -113,14 +113,22 @@ export default function Footer() {
       <div className="max-w-[1100px] mx-auto pt-10 xl:pt-[57px] px-6 xl:px-0">
         <div className="flex flex-col xl:flex-row xl:items-start gap-10 xl:gap-[100px]">
           {/* Tagline */}
-          <p
+          <div
             data-footer-tagline
-            className="font-manrope font-bold text-[20px] text-title leading-normal"
+            className="flex min-w-0 flex-col gap-4 font-manrope text-title"
           >
+            <p className="font-bold text-[20px] leading-normal">
             {language === "fr"
-              ? "Öpixxel transforme tes idées en sites animés qui convertissent."
-              : "Öpixxel turns your ideas into animated websites that convert."}
-          </p>
+              ? "Des boutiques Shopify pensées pour ta marque et tes clients."
+              : "Shopify stores designed for your brand and your customers."}
+            </p>
+            <a
+              href="mailto:ulas.onder07@gmail.com"
+              className="inline-flex min-h-11 items-center self-start text-base font-normal underline decoration-accent underline-offset-4 hover:text-accent transition-colors duration-200"
+            >
+              ulas.onder07@gmail.com
+            </a>
+          </div>
 
           {/* Explorer */}
           <div data-footer-col className="flex flex-col gap-[20px] shrink-0">

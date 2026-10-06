@@ -8,13 +8,13 @@ import { useLanguage } from "@/app/ui/language-context";
 
 const copy = {
   fr: {
-    role: "Développeur front-end créatif, de la maquette au code animé.",
-    roleEnd: "Je construis l’interface entière.",
+    role: "Je crée et repense des boutiques Shopify avec un design et une interface sur mesure.",
+    roleEnd: "",
     availability: <>Disponible pour des projets<br />partout dans le monde</>,
   },
   en: {
-    role: "Creative front-end developer, from design to animated code.",
-    roleEnd: "I build the whole interface.",
+    role: "I create and redesign Shopify stores with bespoke design and a custom interface.",
+    roleEnd: "",
     availability: <>Available for projects<br />worldwide</>,
   },
 } as const;

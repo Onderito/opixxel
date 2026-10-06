@@ -17,9 +17,9 @@ gsap.registerPlugin(ScrollTrigger);
 //       …
 // ─────────────────────────────────────────────────────────────────────────────
 
-const DURATION = 1.8;
-const STEP = 1.1;
-const OPEN_EASE = "sine.inOut";
+const DESKTOP_DURATION = 1.05;
+const DESKTOP_STEP = 0.55;
+const OPEN_EASE = "power2.inOut";
 
 export function usePresentationScroll(refreshKey: string) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -28,7 +28,7 @@ export function usePresentationScroll(refreshKey: string) {
     const section = sectionRef.current;
     if (!section) return;
 
-    const build = (scrollTrigger: ScrollTrigger.Vars) => {
+    const buildDesktop = (scrollTrigger: ScrollTrigger.Vars) => {
       const ctx = gsap.context(() => {
         const clips = gsap.utils.toArray<HTMLElement>("[data-clip]", section);
         const cta = section.querySelector<HTMLElement>("[data-presentation-cta]");
@@ -57,12 +57,12 @@ export function usePresentationScroll(refreshKey: string) {
             transformOrigin: "center center",
           });
 
-          const at = i * STEP;
+          const at = i * DESKTOP_STEP;
           tl.to(
             clip,
             {
               width: naturalW,
-              duration: DURATION,
+              duration: DESKTOP_DURATION,
               ease: OPEN_EASE,
             },
             at,
@@ -72,7 +72,7 @@ export function usePresentationScroll(refreshKey: string) {
             {
               scale: 1,
               opacity: 1,
-              duration: DURATION,
+              duration: DESKTOP_DURATION,
               ease: OPEN_EASE,
             },
             at,
@@ -87,7 +87,10 @@ export function usePresentationScroll(refreshKey: string) {
 
           // Le CTA démarre avec le dernier visuel au lieu d'attendre la fin
           // complète de la séquence.
-          const ctaAt = Math.max(0, (clips.length - 1) * STEP + 0.25);
+          const ctaAt = Math.max(
+            0,
+            (clips.length - 1) * DESKTOP_STEP + 0.15,
+          );
           const naturalW = ctaInner.offsetWidth;
           const naturalH = ctaInner.offsetHeight;
           gsap.set(cta, {
@@ -130,19 +133,117 @@ export function usePresentationScroll(refreshKey: string) {
       return () => ctx.revert();
     };
 
+    const buildMobile = () => {
+      const ctx = gsap.context(() => {
+        const rows = gsap.utils.toArray<HTMLElement>(
+          "[data-presentation-row]",
+          section,
+        );
+        const clips = gsap.utils.toArray<HTMLElement>("[data-clip]", section);
+
+        rows.forEach((row) => {
+          gsap.set(row, {
+            opacity: 0,
+            y: 18,
+            filter: "blur(4px)",
+          });
+        });
+
+        clips.forEach((clip) => {
+          const inner = clip.querySelector<HTMLElement>("[data-clip-inner]");
+          if (!inner) return;
+
+          const naturalW = inner.offsetWidth;
+          const naturalH = inner.offsetHeight;
+
+          gsap.set(clip, {
+            width: 0,
+            height: naturalH,
+            overflow: "hidden",
+          });
+          gsap.set(inner, {
+            position: "absolute",
+            left: "50%",
+            top: 0,
+            xPercent: -50,
+            opacity: 0.72,
+            scale: 0.96,
+            transformOrigin: "center center",
+            willChange: "transform, opacity",
+          });
+
+          clip.dataset.naturalWidth = String(naturalW);
+        });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top 72%",
+            once: true,
+          },
+        });
+
+        rows.forEach((row, rowIndex) => {
+          const rowAt = rowIndex * 0.11;
+          tl.to(
+            row,
+            {
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+              duration: 0.48,
+              ease: "power3.out",
+            },
+            rowAt,
+          );
+
+          const rowClips = gsap.utils.toArray<HTMLElement>("[data-clip]", row);
+          rowClips.forEach((clip, clipIndex) => {
+            const inner = clip.querySelector<HTMLElement>("[data-clip-inner]");
+            const naturalW = Number(clip.dataset.naturalWidth);
+            if (!inner || !naturalW) return;
+
+            const clipAt = rowAt + 0.08 + clipIndex * 0.08;
+            tl.to(
+              clip,
+              {
+                width: naturalW,
+                duration: 0.56,
+                ease: "power3.out",
+              },
+              clipAt,
+            );
+            tl.to(
+              inner,
+              {
+                opacity: 1,
+                scale: 1,
+                duration: 0.56,
+                ease: "power3.out",
+              },
+              clipAt,
+            );
+          });
+        });
+      }, sectionRef);
+
+      return () => ctx.revert();
+    };
+
     const mm = gsap.matchMedia();
 
-    // Animation uniquement sur desktop (≥768px). Sur mobile, les images
-    // restent dans le flux normal (visibles, pas de width:0) → aucun
-    // risque qu'elles restent fermées ou débordent horizontalement.
     mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () =>
-      build({
+      buildDesktop({
         trigger: section,
         start: "top 80%",
-        end: "bottom 35%",
-        // L'inertie absorbe les grands écarts produits par un scroll rapide.
-        scrub: 2.2,
+        end: "bottom 58%",
+        scrub: 1.05,
       }),
+    );
+
+    mm.add(
+      "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
+      buildMobile,
     );
 
     return () => mm.revert();
